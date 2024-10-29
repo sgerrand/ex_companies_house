@@ -8,7 +8,7 @@ defmodule CompaniesHouse.MixProject do
     [
       app: :companies_house,
       version: @version,
-      elixir: "~> 1.17",
+      elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
       deps: deps(),
