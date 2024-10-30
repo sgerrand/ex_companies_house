@@ -10,7 +10,7 @@ defmodule CompaniesHouse.Client do
   @typep environment :: :live | :sandbox
   @type t :: %__MODULE__{environment: environment()}
 
-  @impl_module Application.compile_env!(:companies_house, :client)
+  @impl_module Application.compile_env(:companies_house, :http_client, CompaniesHouse.Client.Req)
 
   @callback delete(path :: nonempty_binary(), client :: __MODULE__.t()) :: Response.t()
   defdelegate delete(path, client \\ %__MODULE__{}), to: @impl_module
