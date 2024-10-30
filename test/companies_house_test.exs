@@ -1,7 +1,7 @@
 defmodule CompaniesHouseTest do
   use ExUnit.Case, async: true
 
-  import Mox
+  import Mox, only: [expect: 3, verify_on_exit!: 1]
 
   doctest CompaniesHouse
 
