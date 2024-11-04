@@ -8,6 +8,7 @@ defmodule CompaniesHouse.Client.Req do
   require Req
 
   alias CompaniesHouse.Client
+  alias CompaniesHouse.Config
   alias CompaniesHouse.Response
 
   @base_live_url "https://api.company-information.service.gov.uk"
@@ -61,8 +62,8 @@ defmodule CompaniesHouse.Client.Req do
   end
 
   defp api_key do
-    System.get_env("COMPANIES_HOUSE_API_KEY") ||
-      raise "Environment variable COMPANIES_HOUSE_API_KEY is not set"
+    Config.get(:api_key) ||
+      Config.raise_error("No :api_key configuration was provided or available.")
   end
 
   defp base_url(client) do
