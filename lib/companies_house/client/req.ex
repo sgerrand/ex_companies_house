@@ -17,7 +17,7 @@ defmodule CompaniesHouse.Client.Req do
   @spec new(client :: Client.t()) :: Req.Request.t()
   def new(client \\ %Client{}) do
     Req.new(
-      base_url: base_url(client),
+      base_url: base_url(client.environment),
       auth: {:basic, api_key()},
       headers: [{"Accept", "application/json"}]
     )
@@ -66,8 +66,8 @@ defmodule CompaniesHouse.Client.Req do
       Config.raise_error("No :api_key configuration was provided or available.")
   end
 
-  defp base_url(client) do
-    case client.environment do
+  defp base_url(environment) do
+    case environment do
       :live ->
         @base_live_url
 
