@@ -50,7 +50,7 @@ defmodule CompaniesHouse.Client.Req do
           Response.t()
   def post(path, params \\ [], client \\ %Client{}) do
     new(client)
-    |> Req.get(url: path, params: params)
+    |> Req.post(url: path, params: params)
   end
 
   @impl true
@@ -58,7 +58,7 @@ defmodule CompaniesHouse.Client.Req do
           Response.t()
   def put(path, params \\ [], client \\ %Client{}) do
     new(client)
-    |> Req.get(url: path, params: params)
+    |> Req.put(url: path, params: params)
   end
 
   defp api_key do
