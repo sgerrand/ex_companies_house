@@ -106,6 +106,7 @@ jobs:
     needs: [credo, dependencies, formatting]
 
     strategy:
+      fail-fast: false
       matrix:
         otp: ['24', '25', '26', '27']
         elixir: ['1.15', '1.16', '1.17']
