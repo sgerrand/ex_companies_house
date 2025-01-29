@@ -2,7 +2,7 @@ defmodule CompaniesHouse.MixProject do
   use Mix.Project
 
   @repo_url "https://github.com/sgerrand/ex_companies_house"
-  @version "0.0.0-dev"
+  @version "0.0.0"
 
   def project do
     [
