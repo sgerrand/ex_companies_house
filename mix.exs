@@ -2,7 +2,7 @@ defmodule CompaniesHouse.MixProject do
   use Mix.Project
 
   @repo_url "https://github.com/sgerrand/ex_companies_house"
-  @version "0.0.0-dev"
+  @version "0.0.0"
 
   def project do
     [
@@ -37,8 +37,9 @@ defmodule CompaniesHouse.MixProject do
       {:req, "~> 0.5.6"},
       {:bypass, "~> 2.1", only: :test},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:mox, "~> 1.0", only: :test},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
-      {:mox, "~> 1.0", only: :test}
+      {:expublish, "~> 2.5", only: :dev, runtime: false}
     ]
   end
 
