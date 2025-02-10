@@ -18,3 +18,7 @@ end
 
 Documentation for this package can
 be found at <https://hexdocs.pm/companies_house>.
+
+## License
+
+CompaniesHouse is [released under the MIT license](LICENSE).
