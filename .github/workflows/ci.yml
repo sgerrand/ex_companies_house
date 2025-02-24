@@ -75,6 +75,9 @@ jobs:
     name: Documentation
     runs-on: ubuntu-latest
 
+    env:
+      MIX_ENV: dev
+
     steps:
     - uses: actions/checkout@v4
     - name: Set up Elixir
@@ -90,8 +93,8 @@ jobs:
         path: |
           _build
           deps
-        key: ${{ runner.os }}-${{ steps.setup-beam.otp-version }}-${{ steps.setup-beam.elixir-version }}-${{ hashFiles('**/mix.lock') }}
-        restore-keys: ${{ runner.os }}-${{ steps.setup-beam.otp-version }}-${{ steps.setup-beam.elixir-version }}-
+        key: ${{ runner.os }}-${{ steps.setup-beam.otp-version }}-${{ steps.setup-beam.elixir-version }}-${{ env.MIX_ENV }}-${{ hashFiles('**/mix.lock') }}
+        restore-keys: ${{ runner.os }}-${{ steps.setup-beam.otp-version }}-${{ steps.setup-beam.elixir-version }}-${{ env.MIX_ENV }}-
     - name: Install and compile dependencies
       if: steps.cache-deps.outputs.cache-hit != 'true'
       run: mix do deps.get --only test, deps.compile
