@@ -14,6 +14,9 @@ defmodule CompaniesHouse.Client.Req do
   @base_live_url "https://api.company-information.service.gov.uk"
   @base_sandbox_url "https://api-sandbox.company-information.service.gov.uk"
 
+  @doc """
+  Creates a new client for interacting with the Companies House API.
+  """
   @spec new(client :: Client.t()) :: Req.Request.t()
   def new(client \\ %Client{}) do
     Req.new(
@@ -24,6 +27,9 @@ defmodule CompaniesHouse.Client.Req do
   end
 
   @impl true
+  @doc """
+  Sends a HTTP DELETE request to the given `path`.
+  """
   @spec delete(path :: nonempty_binary, client :: Client.t()) :: Response.t()
   def delete(path, client \\ %Client{}) do
     new(client)
@@ -31,6 +37,9 @@ defmodule CompaniesHouse.Client.Req do
   end
 
   @impl true
+  @doc """
+  Sends a HTTP GET request to the given `path`.
+  """
   @spec get(path :: nonempty_binary, client :: Client.t()) :: Response.t()
   def get(path, client) do
     new(client)
@@ -38,6 +47,9 @@ defmodule CompaniesHouse.Client.Req do
   end
 
   @impl true
+  @doc """
+  Sends a HTTP GET request with parameters to the given `path`.
+  """
   @spec get(path :: nonempty_binary, params :: keyword(), client :: Client.t()) ::
           Response.t()
   def get(path, params, client) do
@@ -46,6 +58,9 @@ defmodule CompaniesHouse.Client.Req do
   end
 
   @impl true
+  @doc """
+  Sends a HTTP POST request to the given `path`.
+  """
   @spec post(path :: nonempty_binary, params :: keyword(), client :: Client.t()) ::
           Response.t()
   def post(path, params \\ [], client \\ %Client{}) do
@@ -54,6 +69,9 @@ defmodule CompaniesHouse.Client.Req do
   end
 
   @impl true
+  @doc """
+  Sends a HTTP PUT request to the given `path`.
+  """
   @spec put(path :: nonempty_binary, params :: keyword(), client :: Client.t()) ::
           Response.t()
   def put(path, params \\ [], client \\ %Client{}) do

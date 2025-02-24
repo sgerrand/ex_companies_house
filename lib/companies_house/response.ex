@@ -1,4 +1,7 @@
 defmodule CompaniesHouse.Response do
-  @moduledoc false
+  @moduledoc """
+  The response tuple.
+  """
+
   @type t :: {:ok, map()} | {:error, any()}
 end
