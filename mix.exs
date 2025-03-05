@@ -15,7 +15,7 @@ defmodule CompaniesHouse.MixProject do
 
       # Hex
       package: package(),
-      description: "HTTP client for the Companies House API.",
+      description: "Elixir client for the Companies House API",
 
       # Docs
       name: "CompaniesHouse",
