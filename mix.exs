@@ -15,14 +15,13 @@ defmodule CompaniesHouse.MixProject do
 
       # Hex
       package: package(),
-      description: "HTTP client for the Companies House API.",
+      description: "Elixir client for the Companies House API",
+      homepage_url: @repo_url,
+      source_url: @repo_url,
 
       # Docs
       name: "CompaniesHouse",
-      docs: [
-        source_ref: "v#{@version}",
-        source_url: @repo_url
-      ]
+      docs: docs()
     ]
   end
 
@@ -43,13 +42,25 @@ defmodule CompaniesHouse.MixProject do
     ]
   end
 
+  defp docs do
+    [
+      extras: ["README.md", "CHANGELOG.md", "LICENSE"],
+      main: "readme",
+      source_ref: "v#{@version}",
+      source_url: @repo_url
+    ]
+  end
+
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_env), do: ["lib"]
 
   defp package do
     [
       licenses: ["MIT"],
-      links: %{"GitHub" => @repo_url}
+      links: %{
+        "GitHub" => @repo_url,
+        "Changelog" => "https://hexdocs.pm/companies_house/changelog.html"
+      }
     ]
   end
 end
