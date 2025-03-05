@@ -33,6 +33,14 @@ defmodule CompaniesHouse.Client do
           "Invalid environment: #{inspect(environment)}. Must be one of: #{inspect(@valid_environments)}"
   end
 
+  @doc """
+  Creates a new client using application configuration.
+  """
+  @spec from_config() :: t()
+  def from_config do
+    new(Config.environment())
+  end
+
   @impl_module Application.compile_env(:companies_house, :http_client, CompaniesHouse.Client.Req)
 
   @callback delete(path :: nonempty_binary(), client :: __MODULE__.t()) :: Response.t()

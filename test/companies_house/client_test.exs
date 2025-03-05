@@ -34,4 +34,32 @@ defmodule CompaniesHouse.ClientTest do
       end
     end
   end
+
+  describe "from_config/0" do
+    setup do
+      original_env = Application.get_env(:companies_house, :environment)
+
+      on_exit(fn ->
+        if is_nil(original_env) do
+          Application.delete_env(:companies_house, :environment)
+        else
+          Application.put_env(:companies_house, :environment, original_env)
+        end
+      end)
+
+      :ok
+    end
+
+    test "creates client from application config" do
+      Application.put_env(:companies_house, :environment, :live)
+      client = CompaniesHouse.Client.from_config()
+      assert client.environment == :live
+    end
+
+    test "uses default environment when not configured" do
+      Application.delete_env(:companies_house, :environment)
+      client = CompaniesHouse.Client.from_config()
+      assert client.environment == :sandbox
+    end
+  end
 end

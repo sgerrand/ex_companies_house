@@ -44,4 +44,22 @@ defmodule CompaniesHouse.Config do
   def raise_error(message) do
     raise ConfigError, message: message
   end
+
+  @doc """
+  Gets the environment from configuration.
+  Default is :sandbox if not explicitly configured.
+  Raises ConfigError if environment is invalid.
+  """
+  @spec environment() :: :sandbox | :live
+  def environment do
+    env = get(:environment, :sandbox)
+
+    if env in @valid_environments do
+      env
+    else
+      raise_error(
+        "Invalid environment: #{inspect(env)}. Must be one of: #{inspect(@valid_environments)}"
+      )
+    end
+  end
 end

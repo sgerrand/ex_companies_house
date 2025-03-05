@@ -4,6 +4,22 @@ defmodule CompaniesHouse.ConfigTest do
 
   alias CompaniesHouse.Config
 
+  setup do
+    # Save existing environment
+    original_env = Application.get_env(:companies_house, :environment)
+
+    # Clean up after tests
+    on_exit(fn ->
+      if is_nil(original_env) do
+        Application.delete_env(:companies_house, :environment)
+      else
+        Application.put_env(:companies_house, :environment, original_env)
+      end
+    end)
+
+    :ok
+  end
+
   describe "get/2" do
     test "when key exists" do
       Application.put_env(:companies_house, :key, 1)
@@ -31,6 +47,26 @@ defmodule CompaniesHouse.ConfigTest do
     test "raises expected exception" do
       assert_raise Config.ConfigError, "some specific error", fn ->
         Config.raise_error("some specific error")
+      end
+    end
+  end
+
+  describe "environment/0" do
+    test "returns configured environment" do
+      Application.put_env(:companies_house, :environment, :live)
+      assert Config.environment() == :live
+    end
+
+    test "returns default environment when not configured" do
+      Application.delete_env(:companies_house, :environment)
+      assert Config.environment() == :sandbox
+    end
+
+    test "validates environment value" do
+      Application.put_env(:companies_house, :environment, :invalid)
+
+      assert_raise Config.ConfigError, ~r/Invalid environment/, fn ->
+        Config.environment()
       end
     end
   end
