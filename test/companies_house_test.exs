@@ -275,6 +275,39 @@ defmodule CompaniesHouseTest do
       assert {:ok, %{"items" => [%{"company_name" => "Test Company Ltd"}]}} =
                CompaniesHouse.search_companies("Test Company", items_per_page: 10)
     end
+
+    test "returns error when request fails" do
+      expect(CompaniesHouse.ClientMock, :get, fn _path, _params, _client ->
+        {:ok, %{status: 404, body: %{"error" => "Company not found"}}}
+      end)
+
+      assert {:error, {404, %{"error" => "Company not found"}}} =
+               CompaniesHouse.search_companies("Unknown Company")
+    end
+
+    test "handles network errors" do
+      expect(CompaniesHouse.ClientMock, :get, fn _path, _params, _client ->
+        {:error, %{reason: :timeout}}
+      end)
+
+      assert {:error, %{reason: :timeout}} =
+               CompaniesHouse.search_companies("Test Company")
+    end
+
+    test "handles pagination parameters" do
+      expect(CompaniesHouse.ClientMock, :get, fn path, params, _client ->
+        assert path == "/search/companies"
+        assert params == [q: "Test Company", items_per_page: 50, start_index: 10]
+
+        {:ok, %{status: 200, body: %{"items" => [%{"company_name" => "Test Company Ltd"}]}}}
+      end)
+
+      assert {:ok, %{"items" => [%{"company_name" => "Test Company Ltd"}]}} =
+               CompaniesHouse.search_companies("Test Company",
+                 items_per_page: 50,
+                 start_index: 10
+               )
+    end
   end
 
   describe "search_officers/3" do
