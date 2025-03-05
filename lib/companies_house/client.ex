@@ -3,12 +3,35 @@ defmodule CompaniesHouse.Client do
   Documentation for `CompaniesHouse.Client`.
   """
 
-  alias CompaniesHouse.Response
+  alias CompaniesHouse.{Config, Response}
 
   defstruct environment: :sandbox
 
+  @valid_environments [:live, :sandbox]
   @typep environment :: :live | :sandbox
   @type t :: %__MODULE__{environment: environment()}
+
+  @doc """
+  Creates a new client with default environment (:sandbox).
+  """
+  @spec new() :: t()
+  def new do
+    %__MODULE__{}
+  end
+
+  @doc """
+  Creates a new client with specified environment.
+  Raises ArgumentError if environment is invalid.
+  """
+  @spec new(environment()) :: t()
+  def new(environment) when environment in @valid_environments do
+    %__MODULE__{environment: environment}
+  end
+
+  def new(environment) do
+    raise ArgumentError,
+          "Invalid environment: #{inspect(environment)}. Must be one of: #{inspect(@valid_environments)}"
+  end
 
   @impl_module Application.compile_env(:companies_house, :http_client, CompaniesHouse.Client.Req)
 

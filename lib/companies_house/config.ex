@@ -9,6 +9,8 @@ defmodule CompaniesHouse.Config do
 
   @type t :: Keyword.t()
 
+  @valid_environments [:sandbox, :live]
+
   @doc """
   Gets the key value from the environment config.
   """
