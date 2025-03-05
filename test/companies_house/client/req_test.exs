@@ -107,14 +107,14 @@ defmodule CompaniesHouse.Client.ReqTest do
 
     @tag path: "/put"
     test "requests expected path", c do
-      Bypass.expect(c.bypass, "GET", c[:path], fn conn ->
+      Bypass.expect(c.bypass, "PUT", c[:path], fn conn ->
         assert ["Basic c29tZSBBUEkga2V5"] == Plug.Conn.get_req_header(conn, "authorization")
         assert conn.query_string == "some=params"
-        Plug.Conn.send_resp(conn, 200, "fetched")
+        Plug.Conn.send_resp(conn, 200, "updated")
       end)
 
-      {:ok, response} = ReqClient.get(c.url, [some: "params"], c.client)
-      assert "fetched" == response.body
+      {:ok, response} = ReqClient.put(c.url, [some: "params"], c.client)
+      assert "updated" == response.body
     end
   end
 
