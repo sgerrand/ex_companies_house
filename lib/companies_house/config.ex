@@ -9,6 +9,8 @@ defmodule CompaniesHouse.Config do
 
   @type t :: Keyword.t()
 
+  @valid_environments [:sandbox, :live]
+
   @doc """
   Gets the key value from the environment config.
   """
@@ -41,5 +43,35 @@ defmodule CompaniesHouse.Config do
   @spec raise_error(binary()) :: no_return
   def raise_error(message) do
     raise ConfigError, message: message
+  end
+
+  @doc """
+  Gets the API key from configuration.
+  Raises ConfigError if API key is not configured.
+  """
+  @spec api_key() :: String.t()
+  def api_key do
+    case get(:api_key) do
+      nil -> raise_error("API key not found in configuration")
+      key -> key
+    end
+  end
+
+  @doc """
+  Gets the environment from configuration.
+  Default is :sandbox if not explicitly configured.
+  Raises ConfigError if environment is invalid.
+  """
+  @spec environment() :: :sandbox | :live
+  def environment do
+    env = get(:environment, :sandbox)
+
+    if env in @valid_environments do
+      env
+    else
+      raise_error(
+        "Invalid environment: #{inspect(env)}. Must be one of: #{inspect(@valid_environments)}"
+      )
+    end
   end
 end
