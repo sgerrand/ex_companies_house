@@ -20,6 +20,8 @@ defmodule CompaniesHouse.MixProject do
       # Docs
       name: "CompaniesHouse",
       docs: [
+        extras: ["README.md", "LICENSE"],
+        main: "readme",
         source_ref: "v#{@version}",
         source_url: @repo_url
       ]
