@@ -3,34 +3,36 @@ defmodule CompaniesHouse.ClientTest do
 
   doctest CompaniesHouse.Client
 
+  alias CompaniesHouse.Client
+
   describe "struct" do
     test "defaults environment to sandbox" do
-      actual = %CompaniesHouse.Client{}
+      actual = %Client{}
       assert actual.environment == :sandbox
     end
 
     test "can set environment to live" do
-      actual = %CompaniesHouse.Client{environment: :live}
+      actual = %Client{environment: :live}
       assert actual.environment == :live
     end
   end
 
   describe "new/0" do
     test "creates client with default sandbox environment" do
-      client = CompaniesHouse.Client.new()
+      client = Client.new()
       assert client.environment == :sandbox
     end
   end
 
   describe "new/1" do
     test "creates client with specified environment" do
-      client = CompaniesHouse.Client.new(:live)
+      client = Client.new(:live)
       assert client.environment == :live
     end
 
     test "raises error for invalid environment" do
       assert_raise ArgumentError, ~r/Invalid environment/, fn ->
-        CompaniesHouse.Client.new(:invalid)
+        Client.new(:invalid)
       end
     end
   end
@@ -52,13 +54,13 @@ defmodule CompaniesHouse.ClientTest do
 
     test "creates client from application config" do
       Application.put_env(:companies_house, :environment, :live)
-      client = CompaniesHouse.Client.from_config()
+      client = Client.from_config()
       assert client.environment == :live
     end
 
     test "uses default environment when not configured" do
       Application.delete_env(:companies_house, :environment)
-      client = CompaniesHouse.Client.from_config()
+      client = Client.from_config()
       assert client.environment == :sandbox
     end
   end
