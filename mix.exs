@@ -16,6 +16,8 @@ defmodule CompaniesHouse.MixProject do
       # Hex
       package: package(),
       description: "Elixir client for the Companies House API",
+      homepage_url: @repo_url,
+      source_url: @repo_url,
 
       # Docs
       name: "CompaniesHouse",
