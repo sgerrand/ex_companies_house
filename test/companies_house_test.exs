@@ -70,6 +70,15 @@ defmodule CompaniesHouseTest do
       assert {:error, {404, %{"error" => "Company not found"}}} ==
                CompaniesHouse.get_registered_office_address("12345678")
     end
+
+    test "handles network errors" do
+      expect(CompaniesHouse.ClientMock, :get, fn _req, _client ->
+        {:error, %{reason: :timeout}}
+      end)
+
+      assert {:error, %{reason: :timeout}} ==
+               CompaniesHouse.get_registered_office_address("12345678")
+    end
   end
 
   describe "list_filing_history/1" do

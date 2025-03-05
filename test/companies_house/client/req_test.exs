@@ -118,6 +118,42 @@ defmodule CompaniesHouse.Client.ReqTest do
     end
   end
 
+  describe "network errors" do
+    test "handles connection failures" do
+      # Point to non-existent server on localhost port 1
+      url = "http://localhost:1/some-endpoint"
+      client = %Client{environment: :sandbox}
+
+      assert {:error, %{reason: :econnrefused}} = ReqClient.get(url, client)
+    end
+  end
+
+  describe "error handling" do
+    setup [:setup_bypass]
+
+    @tag path: "/error"
+    test "handles non-200 responses", c do
+      Bypass.expect(c.bypass, "GET", c[:path], fn conn ->
+        Plug.Conn.send_resp(conn, 500, ~s({"error": "Internal server error"}))
+      end)
+
+      {:ok, response} = ReqClient.get(c.url, c.client)
+      assert response.status == 500
+      assert response.body == ~s({"error": "Internal server error"})
+    end
+
+    @tag path: "/json-error"
+    test "handles malformed JSON", c do
+      Bypass.expect(c.bypass, "GET", c[:path], fn conn ->
+        Plug.Conn.send_resp(conn, 200, "{malformed json")
+      end)
+
+      {:ok, response} = ReqClient.get(c.url, c.client)
+      assert response.status == 200
+      assert response.body == "{malformed json"
+    end
+  end
+
   defp setup_bypass(%{path: path}) do
     bypass = Bypass.open()
     client = %Client{environment: :sandbox}
