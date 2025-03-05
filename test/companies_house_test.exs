@@ -68,7 +68,7 @@ defmodule CompaniesHouseTest do
       end)
 
       assert {:error, {404, %{"error" => "Company not found"}}} ==
-               CompaniesHouse.get_company_profile("12345678")
+               CompaniesHouse.get_registered_office_address("12345678")
     end
   end
 
