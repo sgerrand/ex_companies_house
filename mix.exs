@@ -19,12 +19,7 @@ defmodule CompaniesHouse.MixProject do
 
       # Docs
       name: "CompaniesHouse",
-      docs: [
-        extras: ["README.md", "LICENSE"],
-        main: "readme",
-        source_ref: "v#{@version}",
-        source_url: @repo_url
-      ]
+      docs: docs()
     ]
   end
 
@@ -42,6 +37,15 @@ defmodule CompaniesHouse.MixProject do
       {:mox, "~> 1.0", only: :test},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
       {:expublish, "~> 2.5", only: :dev, runtime: false}
+    ]
+  end
+
+  defp docs do
+    [
+      extras: ["README.md", "LICENSE"],
+      main: "readme",
+      source_ref: "v#{@version}",
+      source_url: @repo_url
     ]
   end
 
