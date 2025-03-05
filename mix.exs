@@ -42,7 +42,7 @@ defmodule CompaniesHouse.MixProject do
 
   defp docs do
     [
-      extras: ["README.md", "LICENSE"],
+      extras: ["README.md", "CHANGELOG.md", "LICENSE"],
       main: "readme",
       source_ref: "v#{@version}",
       source_url: @repo_url
@@ -55,7 +55,10 @@ defmodule CompaniesHouse.MixProject do
   defp package do
     [
       licenses: ["MIT"],
-      links: %{"GitHub" => @repo_url}
+      links: %{
+        "GitHub" => @repo_url,
+        "Changelog" => "https://hexdocs.pm/companies_house/changelog.html"
+      }
     ]
   end
 end
