@@ -11,6 +11,15 @@ permissions:
   contents: read
 
 jobs:
+  required:
+    name: Required
+    needs: [credo, docs, test]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Status of workflow jobs
+        run: echo 'All jobs in this workflow have successfully run'
+
   credo:
     name: Static analysis
     runs-on: ubuntu-latest
