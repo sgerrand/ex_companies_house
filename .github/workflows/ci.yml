@@ -13,44 +13,12 @@ permissions:
 jobs:
   required:
     name: Required
-    needs: [credo, docs, test]
+    needs: [docs, test]
     runs-on: ubuntu-latest
 
     steps:
       - name: Status of workflow jobs
         run: echo 'All jobs in this workflow have successfully run'
-
-  credo:
-    name: Static analysis
-    runs-on: ubuntu-latest
-
-    env:
-      MIX_ENV: test
-
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Elixir
-      id: setup-beam
-      uses: erlef/setup-beam@v1
-      with:
-        version-file: '.tool-versions'
-        version-type: 'strict'
-    - name: Cache dependencies
-      id: cache-deps
-      uses: actions/cache@v4
-      with:
-        path: |
-          _build
-          deps
-        key: ${{ runner.os }}-${{ steps.setup-beam.otp-version }}-${{ steps.setup-beam.elixir-version }}-${{ hashFiles('**/mix.lock') }}
-        restore-keys: ${{ runner.os }}-${{ steps.setup-beam.otp-version }}-${{ steps.setup-beam.elixir-version }}-
-    - name: Install and compile dependencies
-      if: steps.cache-deps.outputs.cache-hit != 'true'
-      run: mix do deps.get --only ${{ env.MIX_ENV }}, deps.compile
-    - name: Compile code
-      run: mix compile
-    - name: Run static analysis
-      run: mix credo
 
   docs:
     name: Documentation
@@ -85,7 +53,6 @@ jobs:
   test:
     name: Tests (Elixir ${{ matrix.elixir }} / OTP ${{ matrix.otp }})
     runs-on: ubuntu-latest
-    needs: [credo, docs]
 
     strategy:
       fail-fast: false
@@ -132,5 +99,8 @@ jobs:
       if: ${{ matrix.lint }}
     - name: Compile code
       run: mix compile
+    - name: Run static code analysis
+      run: mix credo --strict
+      if: ${{ matrix.lint }}
     - name: Run tests
       run: mix test --warnings-as-errors
