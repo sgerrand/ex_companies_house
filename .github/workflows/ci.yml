@@ -98,7 +98,7 @@ jobs:
       run: mix deps.unlock --check-unused
       if: ${{ matrix.lint }}
     - name: Compile code
-      run: mix compile
+      run: mix compile --warnings-as-errors
     - name: Run static code analysis
       run: mix credo --strict
       if: ${{ matrix.lint }}
