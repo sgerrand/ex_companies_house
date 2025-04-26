@@ -35,8 +35,9 @@ defmodule CompaniesHouse.MixProject do
     [
       {:req, "~> 0.5.6"},
       {:bypass, "~> 2.1", only: :test},
-      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:excoveralls, "~> 0.18", only: :test},
       {:mox, "~> 1.0", only: :test},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
       {:expublish, "~> 2.5", only: :dev, runtime: false}
     ]
