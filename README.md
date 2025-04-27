@@ -1,5 +1,6 @@
 # CompaniesHouse
 
+[![Test Status](https://github.com/sgerrand/ex_companies_house/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sgerrand/ex_companies_house/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/sgerrand/ex_companies_house/badge.svg?branch=main)](https://coveralls.io/github/sgerrand/ex_companies_house?branch=main)
 [![Hex Version](https://img.shields.io/hexpm/v/companies_house.svg)](https://hex.pm/packages/companies_house)
 [![Hex Docs](https://img.shields.io/badge/docs-hexpm-blue.svg)](https://hexdocs.pm/companies_house/)
