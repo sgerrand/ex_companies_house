@@ -1,6 +1,7 @@
 # CompaniesHouse
 
-[![Hex Version](https://img.shields.io/hexpm/v/companies_house.svg)](https://hex.pm/packages/companies_house) [![Hex Docs](https://img.shields.io/badge/docs-hexpm-blue.svg)](https://hexdocs.pm/companies_house/)
+[![Hex Version](https://img.shields.io/hexpm/v/companies_house.svg)](https://hex.pm/packages/companies_house)
+[![Hex Docs](https://img.shields.io/badge/docs-hexpm-blue.svg)](https://hexdocs.pm/companies_house/)
 
 An Elixir client for the [Companies House
 API](https://developer.companieshouse.gov.uk/).
