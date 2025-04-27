@@ -6,7 +6,7 @@ defmodule CompaniesHouse.ClientTest do
   doctest CompaniesHouse.Client
 
   alias CompaniesHouse.Client
-  alias CompaniesHouse.ClientMock
+  alias CompaniesHouse.MockHTTPClient
 
   describe "struct" do
     test "defaults environment to sandbox" do
@@ -79,7 +79,7 @@ defmodule CompaniesHouse.ClientTest do
     test "delete/2 delegates to implementation", %{client: client} do
       assert function_exported?(Client, :delete, 2)
 
-      expect(ClientMock, :delete, fn path, received_client ->
+      expect(MockHTTPClient, :delete, fn path, received_client ->
         assert path == "some-delete-path"
         assert received_client == client
         "delete-result"
@@ -91,7 +91,7 @@ defmodule CompaniesHouse.ClientTest do
     test "delete/1 uses default client" do
       assert function_exported?(Client, :delete, 1)
 
-      expect(ClientMock, :delete, fn path, received_client ->
+      expect(MockHTTPClient, :delete, fn path, received_client ->
         assert path == "some-delete-path"
         assert received_client == %Client{}
         "delete-result"
@@ -103,7 +103,7 @@ defmodule CompaniesHouse.ClientTest do
     test "get/2 delegates to implementation", %{client: client} do
       assert function_exported?(Client, :get, 2)
 
-      expect(ClientMock, :get, fn path, received_client ->
+      expect(MockHTTPClient, :get, fn path, received_client ->
         assert path == "some-get-path"
         assert received_client == client
         "get-result"
@@ -115,7 +115,7 @@ defmodule CompaniesHouse.ClientTest do
     test "get/3 delegates to implementation", %{client: client} do
       assert function_exported?(Client, :get, 3)
 
-      expect(ClientMock, :get, fn path, params, received_client ->
+      expect(MockHTTPClient, :get, fn path, params, received_client ->
         assert path == "some-get-path"
         assert params == [some_key: "some-value"]
         assert received_client == client
@@ -128,7 +128,7 @@ defmodule CompaniesHouse.ClientTest do
     test "post/3 delegates to implementation", %{client: client} do
       assert function_exported?(Client, :post, 3)
 
-      expect(ClientMock, :post, fn path, params, received_client ->
+      expect(MockHTTPClient, :post, fn path, params, received_client ->
         assert path == "some-post-path"
         assert params == [some_key: "some-value"]
         assert received_client == client
@@ -141,7 +141,7 @@ defmodule CompaniesHouse.ClientTest do
     test "post/2 uses default client" do
       assert function_exported?(Client, :post, 2)
 
-      expect(ClientMock, :post, fn path, params, received_client ->
+      expect(MockHTTPClient, :post, fn path, params, received_client ->
         assert path == "some-post-path"
         assert params == [some_key: "some-value"]
         assert received_client == %Client{}
@@ -154,7 +154,7 @@ defmodule CompaniesHouse.ClientTest do
     test "post/1 uses default params and client" do
       assert function_exported?(Client, :post, 1)
 
-      expect(ClientMock, :post, fn path, params, received_client ->
+      expect(MockHTTPClient, :post, fn path, params, received_client ->
         assert path == "some-post-path"
         assert params == []
         assert received_client == %Client{}
@@ -167,7 +167,7 @@ defmodule CompaniesHouse.ClientTest do
     test "put/3 delegates to implementation", %{client: client} do
       assert function_exported?(Client, :put, 3)
 
-      expect(ClientMock, :put, fn path, params, received_client ->
+      expect(MockHTTPClient, :put, fn path, params, received_client ->
         assert path == "some-put-path"
         assert params == [some_key: "some-value"]
         assert received_client == client
@@ -180,7 +180,7 @@ defmodule CompaniesHouse.ClientTest do
     test "put/2 uses default client" do
       assert function_exported?(Client, :put, 2)
 
-      expect(ClientMock, :put, fn path, params, received_client ->
+      expect(MockHTTPClient, :put, fn path, params, received_client ->
         assert path == "some-put-path"
         assert params == [some_key: "some-value"]
         assert received_client == %Client{}
@@ -193,7 +193,7 @@ defmodule CompaniesHouse.ClientTest do
     test "put/1 uses default params and client" do
       assert function_exported?(Client, :put, 1)
 
-      expect(ClientMock, :put, fn path, params, received_client ->
+      expect(MockHTTPClient, :put, fn path, params, received_client ->
         assert path == "some-put-path"
         assert params == []
         assert received_client == %Client{}
