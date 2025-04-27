@@ -38,6 +38,18 @@ defmodule CompaniesHouse.Client.ReqTest do
       assert Map.has_key?(client.options, :base_url)
       assert client.options.base_url == "https://api-sandbox.company-information.service.gov.uk"
     end
+
+    test "raises error when api key is not configured" do
+      assert Application.delete_env(:companies_house, :api_key) == :ok
+
+      assert_raise(
+        CompaniesHouse.Config.ConfigError,
+        "No :api_key configuration was provided or available.",
+        fn ->
+          ReqClient.new(%Client{environment: :sandbox})
+        end
+      )
+    end
   end
 
   describe "delete/2" do
