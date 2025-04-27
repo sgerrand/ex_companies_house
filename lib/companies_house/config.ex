@@ -16,7 +16,9 @@ defmodule CompaniesHouse.Config do
   """
   @spec get(atom(), any()) :: any()
   def get(key, default \\ nil) do
-    get_env_config([], key, default)
+    :companies_house
+    |> Application.get_all_env()
+    |> Keyword.get(key, default)
   end
 
   @doc """
@@ -25,16 +27,6 @@ defmodule CompaniesHouse.Config do
   @spec put(t(), atom(), any()) :: t()
   def put(config, key, value) do
     Keyword.put(config, key, value)
-  end
-
-  defp get_env_config(config, key, default, env_key \\ :companies_house) do
-    config
-    |> Keyword.get(:otp_app)
-    |> case do
-      nil -> Application.get_all_env(env_key)
-      otp_app -> Application.get_env(otp_app, env_key, [])
-    end
-    |> Keyword.get(key, default)
   end
 
   @doc """

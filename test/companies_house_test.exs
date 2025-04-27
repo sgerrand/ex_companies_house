@@ -5,13 +5,16 @@ defmodule CompaniesHouseTest do
 
   doctest CompaniesHouse
 
+  alias CompaniesHouse.Client
+  alias CompaniesHouse.MockHTTPClient
+
   setup :verify_on_exit!
 
   describe "get_company_profile/1" do
     test "returns company profile when successful" do
-      expect(CompaniesHouse.ClientMock, :get, fn path, client ->
+      expect(MockHTTPClient, :get, fn path, client ->
         assert path == "/company/12345678"
-        assert client == %CompaniesHouse.Client{environment: :sandbox}
+        assert client == %Client{environment: :sandbox}
 
         {:ok, %{status: 200, body: %{company_name: "Test Company Ltd"}}}
       end)
@@ -21,7 +24,7 @@ defmodule CompaniesHouseTest do
     end
 
     test "returns error when request fails" do
-      expect(CompaniesHouse.ClientMock, :get, fn _req, _client ->
+      expect(MockHTTPClient, :get, fn _req, _client ->
         {:ok, %{status: 404, body: %{"error" => "Company not found"}}}
       end)
 
@@ -32,9 +35,9 @@ defmodule CompaniesHouseTest do
 
   describe "get_registered_office_address/1" do
     test "returns company profile when successful" do
-      expect(CompaniesHouse.ClientMock, :get, fn path, client ->
+      expect(MockHTTPClient, :get, fn path, client ->
         assert path == "/company/12345678/registered-office-address"
-        assert client == %CompaniesHouse.Client{environment: :sandbox}
+        assert client == %Client{environment: :sandbox}
 
         {:ok,
          %{
@@ -63,7 +66,7 @@ defmodule CompaniesHouseTest do
     end
 
     test "returns error when request fails" do
-      expect(CompaniesHouse.ClientMock, :get, fn _req, _client ->
+      expect(MockHTTPClient, :get, fn _req, _client ->
         {:ok, %{status: 404, body: %{"error" => "Company not found"}}}
       end)
 
@@ -72,7 +75,7 @@ defmodule CompaniesHouseTest do
     end
 
     test "handles network errors" do
-      expect(CompaniesHouse.ClientMock, :get, fn _req, _client ->
+      expect(MockHTTPClient, :get, fn _req, _client ->
         {:error, %{reason: :timeout}}
       end)
 
@@ -83,9 +86,9 @@ defmodule CompaniesHouseTest do
 
   describe "list_filing_history/1" do
     test "returns list of filing history when successful" do
-      expect(CompaniesHouse.ClientMock, :get, fn path, _params, client ->
+      expect(MockHTTPClient, :get, fn path, _params, client ->
         assert path == "/company/12345678/filing-history"
-        assert client == %CompaniesHouse.Client{environment: :sandbox}
+        assert client == %Client{environment: :sandbox}
 
         {:ok,
          %{
@@ -128,7 +131,7 @@ defmodule CompaniesHouseTest do
     end
 
     test "returns error when request fails" do
-      expect(CompaniesHouse.ClientMock, :get, fn _path, _params, _client ->
+      expect(MockHTTPClient, :get, fn _path, _params, _client ->
         {:ok, %{status: 404, body: %{"error" => "Company not found"}}}
       end)
 
@@ -139,9 +142,9 @@ defmodule CompaniesHouseTest do
 
   describe "get_filing_history/2" do
     test "returns filing history when successful" do
-      expect(CompaniesHouse.ClientMock, :get, fn path, client ->
+      expect(MockHTTPClient, :get, fn path, client ->
         assert path == "/company/12345678/filing-history/123"
-        assert client == %CompaniesHouse.Client{environment: :sandbox}
+        assert client == %Client{environment: :sandbox}
 
         {:ok,
          %{
@@ -166,7 +169,7 @@ defmodule CompaniesHouseTest do
     end
 
     test "returns error when request fails" do
-      expect(CompaniesHouse.ClientMock, :get, fn _path, _client ->
+      expect(MockHTTPClient, :get, fn _path, _client ->
         {:ok, %{status: 404, body: %{"error" => "Company not found"}}}
       end)
 
@@ -177,9 +180,9 @@ defmodule CompaniesHouseTest do
 
   describe "list_persons_with_significant_control/3" do
     test "returns list of people with significant control when successful" do
-      expect(CompaniesHouse.ClientMock, :get, fn path, _params, client ->
+      expect(MockHTTPClient, :get, fn path, _params, client ->
         assert path == "/company/12345678/persons-with-significant-control"
-        assert client == %CompaniesHouse.Client{environment: :sandbox}
+        assert client == %Client{environment: :sandbox}
 
         {:ok, %{status: 200, body: %{items: [%{name: "Jane Bloggs"}, %{name: "John Doe"}]}}}
       end)
@@ -189,7 +192,7 @@ defmodule CompaniesHouseTest do
     end
 
     test "returns error when request fails" do
-      expect(CompaniesHouse.ClientMock, :get, fn _path, _params, _client ->
+      expect(MockHTTPClient, :get, fn _path, _params, _client ->
         {:ok, %{status: 404, body: %{"error" => "Company not found"}}}
       end)
 
@@ -200,9 +203,9 @@ defmodule CompaniesHouseTest do
 
   describe "get_person_with_significant_control/3" do
     test "returns person with significant control when successful" do
-      expect(CompaniesHouse.ClientMock, :get, fn path, client ->
+      expect(MockHTTPClient, :get, fn path, client ->
         assert path == "/company/12345678/persons-with-significant-control/individual/987"
-        assert client == %CompaniesHouse.Client{environment: :sandbox}
+        assert client == %Client{environment: :sandbox}
 
         {:ok, %{status: 200, body: %{name: "Jane Bloggs"}}}
       end)
@@ -212,7 +215,7 @@ defmodule CompaniesHouseTest do
     end
 
     test "returns error when request fails" do
-      expect(CompaniesHouse.ClientMock, :get, fn _path, _client ->
+      expect(MockHTTPClient, :get, fn _path, _client ->
         {:ok, %{status: 404, body: %{"error" => "Company not found"}}}
       end)
 
@@ -223,9 +226,9 @@ defmodule CompaniesHouseTest do
 
   describe "list_company_officers/1" do
     test "returns list of company officers when successful" do
-      expect(CompaniesHouse.ClientMock, :get, fn path, _params, client ->
+      expect(MockHTTPClient, :get, fn path, _params, client ->
         assert path == "/company/12345678/officers"
-        assert client == %CompaniesHouse.Client{environment: :sandbox}
+        assert client == %Client{environment: :sandbox}
 
         {:ok, %{status: 200, body: %{items: [%{name: "Jane Bloggs"}, %{name: "John Doe"}]}}}
       end)
@@ -235,7 +238,7 @@ defmodule CompaniesHouseTest do
     end
 
     test "returns error when request fails" do
-      expect(CompaniesHouse.ClientMock, :get, fn _path, _params, _client ->
+      expect(MockHTTPClient, :get, fn _path, _params, _client ->
         {:ok, %{status: 404, body: %{"error" => "Company not found"}}}
       end)
 
@@ -246,9 +249,9 @@ defmodule CompaniesHouseTest do
 
   describe "get_officer_appointment/2" do
     test "returns company officer when successful" do
-      expect(CompaniesHouse.ClientMock, :get, fn path, client ->
+      expect(MockHTTPClient, :get, fn path, client ->
         assert path == "/company/12345678/appointments/123"
-        assert client == %CompaniesHouse.Client{environment: :sandbox}
+        assert client == %Client{environment: :sandbox}
 
         {:ok,
          %{
@@ -262,7 +265,7 @@ defmodule CompaniesHouseTest do
     end
 
     test "returns error when request fails" do
-      expect(CompaniesHouse.ClientMock, :get, fn _path, _client ->
+      expect(MockHTTPClient, :get, fn _path, _client ->
         {:ok, %{status: 404, body: %{"error" => "Company not found"}}}
       end)
 
@@ -273,10 +276,10 @@ defmodule CompaniesHouseTest do
 
   describe "search_companies/3" do
     test "returns search results when successful" do
-      expect(CompaniesHouse.ClientMock, :get, fn path, params, client ->
+      expect(MockHTTPClient, :get, fn path, params, client ->
         assert path == "/search/companies"
         assert params == [q: "Test Company", items_per_page: 10]
-        assert client == %CompaniesHouse.Client{environment: :sandbox}
+        assert client == %Client{environment: :sandbox}
 
         {:ok, %{status: 200, body: %{"items" => [%{"company_name" => "Test Company Ltd"}]}}}
       end)
@@ -286,7 +289,7 @@ defmodule CompaniesHouseTest do
     end
 
     test "returns error when request fails" do
-      expect(CompaniesHouse.ClientMock, :get, fn _path, _params, _client ->
+      expect(MockHTTPClient, :get, fn _path, _params, _client ->
         {:ok, %{status: 404, body: %{"error" => "Company not found"}}}
       end)
 
@@ -295,7 +298,7 @@ defmodule CompaniesHouseTest do
     end
 
     test "handles network errors" do
-      expect(CompaniesHouse.ClientMock, :get, fn _path, _params, _client ->
+      expect(MockHTTPClient, :get, fn _path, _params, _client ->
         {:error, %{reason: :timeout}}
       end)
 
@@ -304,7 +307,7 @@ defmodule CompaniesHouseTest do
     end
 
     test "handles pagination parameters" do
-      expect(CompaniesHouse.ClientMock, :get, fn path, params, _client ->
+      expect(MockHTTPClient, :get, fn path, params, _client ->
         assert path == "/search/companies"
         assert params == [q: "Test Company", items_per_page: 50, start_index: 10]
 
@@ -321,10 +324,10 @@ defmodule CompaniesHouseTest do
 
   describe "search_officers/3" do
     test "returns search results when successful" do
-      expect(CompaniesHouse.ClientMock, :get, fn path, params, client ->
+      expect(MockHTTPClient, :get, fn path, params, client ->
         assert path == "/search/officers"
         assert params == [q: "some officer", items_per_page: 10]
-        assert client == %CompaniesHouse.Client{environment: :sandbox}
+        assert client == %Client{environment: :sandbox}
 
         {:ok, %{status: 200, body: %{"items" => [%{"company_name" => "Test Company Ltd"}]}}}
       end)
@@ -334,7 +337,7 @@ defmodule CompaniesHouseTest do
     end
 
     test "returns error when request fails" do
-      expect(CompaniesHouse.ClientMock, :get, fn _path, _params, _client ->
+      expect(MockHTTPClient, :get, fn _path, _params, _client ->
         {:ok, %{status: 404, body: %{"error" => "Officer not found"}}}
       end)
 
@@ -343,7 +346,7 @@ defmodule CompaniesHouseTest do
     end
 
     test "returns error when unknown error occurs" do
-      expect(CompaniesHouse.ClientMock, :get, fn _path, _params, _client ->
+      expect(MockHTTPClient, :get, fn _path, _params, _client ->
         {:error, "An unknown error occurred."}
       end)
 

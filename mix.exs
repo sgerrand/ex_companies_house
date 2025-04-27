@@ -12,6 +12,14 @@ defmodule CompaniesHouse.MixProject do
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
       deps: deps(),
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.html": :test
+      ],
+      test_coverage: [
+        ignore_modules: [CompaniesHouse.Response],
+        tool: ExCoveralls
+      ],
 
       # Hex
       package: package(),
@@ -35,8 +43,9 @@ defmodule CompaniesHouse.MixProject do
     [
       {:req, "~> 0.5.6"},
       {:bypass, "~> 2.1", only: :test},
-      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:excoveralls, "~> 0.18", only: :test},
       {:mox, "~> 1.0", only: :test},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
       {:expublish, "~> 2.5", only: :dev, runtime: false}
     ]

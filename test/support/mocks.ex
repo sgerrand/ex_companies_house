@@ -1,1 +1,1 @@
-Mox.defmock(CompaniesHouse.ClientMock, for: CompaniesHouse.Client)
+Mox.defmock(CompaniesHouse.MockHTTPClient, for: CompaniesHouse.Client)
