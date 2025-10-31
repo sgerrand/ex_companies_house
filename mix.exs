@@ -12,10 +12,6 @@ defmodule CompaniesHouse.MixProject do
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
       deps: deps(),
-      preferred_cli_env: [
-        coveralls: :test,
-        "coveralls.html": :test
-      ],
       test_coverage: [
         ignore_modules: [CompaniesHouse.Response],
         tool: ExCoveralls
@@ -36,6 +32,12 @@ defmodule CompaniesHouse.MixProject do
   def application do
     [
       extra_applications: [:logger]
+    ]
+  end
+
+  def cli do
+    [
+      preferred_envs: [coveralls: :test, "coveralls.html": :test]
     ]
   end
 
