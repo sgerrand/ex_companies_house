@@ -21,7 +21,7 @@ defmodule CompaniesHouse.Client.Req do
   def new(client \\ %Client{}) do
     Req.new(
       base_url: base_url(client.environment),
-      auth: {:basic, api_key()},
+      auth: {:basic, Config.api_key()},
       headers: [{"Accept", "application/json"}]
     )
   end
@@ -77,11 +77,6 @@ defmodule CompaniesHouse.Client.Req do
   def put(path, params \\ [], client \\ %Client{}) do
     new(client)
     |> Req.put(url: path, params: params)
-  end
-
-  defp api_key do
-    Config.get(:api_key) ||
-      Config.raise_error("No :api_key configuration was provided or available.")
   end
 
   defp base_url(environment) do
