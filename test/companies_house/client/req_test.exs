@@ -52,7 +52,7 @@ defmodule CompaniesHouse.Client.ReqTest do
 
       assert_raise(
         CompaniesHouse.Config.ConfigError,
-        "No :api_key configuration was provided or available.",
+        "API key not found in configuration",
         fn ->
           ReqClient.new(%Client{environment: :sandbox})
         end
