@@ -21,6 +21,31 @@ def deps do
 end
 ```
 
+## Development
+
+### Requirements
+
+- Elixir (see `.tool-versions` or `mix.exs` for version)
+- [Homebrew](https://brew.sh) (for installing pre-commit hook dependencies)
+
+### Setup
+
+```shell
+bin/setup
+mix setup
+```
+
+`bin/setup` installs the pre-commit hook tools (`actionlint`, `check-jsonschema`, `lefthook`, `markdownlint-cli2`) and activates the hooks. `mix setup` fetches Elixir dependencies.
+
+### Common commands
+
+```shell
+mix test          # Run tests
+mix credo         # Lint
+mix format        # Format code
+mix coveralls     # Test coverage
+```
+
 ## License
 
 CompaniesHouse is [released under the MIT license](LICENSE).
