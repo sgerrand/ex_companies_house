@@ -1,6 +1,25 @@
 defmodule CompaniesHouse do
   @moduledoc """
-  Documentation for `CompaniesHouse`.
+  Client for the [Companies House API](https://developer-specs.company-information.service.gov.uk/).
+
+  ## Configuration
+
+  Set your API key in your application config:
+
+      config :companies_house, api_key: "your-api-key"
+
+  By default the client targets the sandbox environment. To use the live API:
+
+      config :companies_house, environment: :live
+
+  ## Usage
+
+      # Fetch a company profile using the default (sandbox) client
+      {:ok, profile} = CompaniesHouse.get_company_profile("00000006")
+
+      # Use the live environment
+      client = CompaniesHouse.Client.new(:live)
+      {:ok, officers} = CompaniesHouse.list_company_officers("00000006", [], client)
   """
 
   alias CompaniesHouse.Client
