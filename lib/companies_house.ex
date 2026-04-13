@@ -91,7 +91,7 @@ defmodule CompaniesHouse do
     |> handle_response()
   end
 
-  defp maybe_extract_items({:ok, %{items: items}}), do: {:ok, items}
+  defp maybe_extract_items({:ok, %{"items" => items}}), do: {:ok, items}
 
   defp maybe_extract_items(response_tuple), do: response_tuple
 
