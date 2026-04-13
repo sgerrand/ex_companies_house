@@ -79,16 +79,9 @@ defmodule CompaniesHouse.Client.Req do
     |> Req.put(url: path, params: params)
   end
 
-  defp base_url(environment) do
-    case environment do
-      :live ->
-        @base_live_url
+  defp base_url(:live), do: @base_live_url
+  defp base_url(:sandbox), do: @base_sandbox_url
 
-      :sandbox ->
-        @base_sandbox_url
-
-      _ ->
-        @base_sandbox_url
-    end
-  end
+  defp base_url(env),
+    do: raise(ArgumentError, "Unknown environment: #{inspect(env)}")
 end
