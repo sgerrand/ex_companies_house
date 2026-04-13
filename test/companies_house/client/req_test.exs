@@ -39,12 +39,10 @@ defmodule CompaniesHouse.Client.ReqTest do
       assert client.options.base_url == "https://api-sandbox.company-information.service.gov.uk"
     end
 
-    test "configures sandbox url when given any other environment" do
-      client = ReqClient.new(%Client{environment: :unknown})
-
-      assert Map.has_key?(client, :options)
-      assert Map.has_key?(client.options, :base_url)
-      assert client.options.base_url == "https://api-sandbox.company-information.service.gov.uk"
+    test "raises for unknown environment" do
+      assert_raise ArgumentError, ~r/Unknown environment/, fn ->
+        ReqClient.new(%Client{environment: :unknown})
+      end
     end
 
     test "raises error when api key is not configured" do
