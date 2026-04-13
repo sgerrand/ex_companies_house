@@ -105,6 +105,6 @@ defmodule CompaniesHouse do
 
   defp handle_response({:error, _} = error), do: error
 
-  defp http_client,
-    do: Application.get_env(:companies_house, :http_client, CompaniesHouse.Client.Req)
+  @http_client Application.compile_env(:companies_house, :http_client, CompaniesHouse.Client.Req)
+  defp http_client, do: @http_client
 end
