@@ -1,5 +1,5 @@
 defmodule CompaniesHouse.ClientTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   import Mox, only: [expect: 3, verify_on_exit!: 1]
 
