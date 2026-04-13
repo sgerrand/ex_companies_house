@@ -12,12 +12,26 @@ permissions:
 jobs:
   required:
     name: Required
-    needs: [docs, test]
+    needs: [docs, lint-markdown, test]
     runs-on: ubuntu-latest
 
     steps:
       - name: Status of workflow jobs
         run: echo 'All jobs in this workflow have successfully run'
+
+  lint-markdown:
+    name: Markdown lint
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        persist-credentials: false
+    - name: Lint Markdown files
+      uses: DavidAnson/markdownlint-cli2-action@05f32210e84442804257b2a6f20b273450ec8265 # v19.1.0
+      with:
+        globs: "**/*.md"
+        config: ".markdownlint-cli2.jsonc"
 
   docs:
     name: Documentation
@@ -47,7 +61,9 @@ jobs:
         restore-keys: ${{ runner.os }}-${{ steps.setup-beam.outputs.otp-version }}-${{ steps.setup-beam.outputs.elixir-version }}-${{ env.MIX_ENV }}-
     - name: Install and compile dependencies
       if: steps.cache-deps.outputs.cache-hit != 'true'
-      run: mix do deps.get --only ${{ env.MIX_ENV }}, deps.compile
+      run: |
+        # shellcheck disable=SC1010
+        mix do deps.get --only ${{ env.MIX_ENV }}, deps.compile
     - name: Generate documentation
       run: mix docs --warnings-as-errors
 
@@ -93,7 +109,9 @@ jobs:
         restore-keys: ${{ runner.os }}-mix-${{ matrix.otp }}-${{ matrix.elixir }}-
     - name: Install and compile dependencies
       if: steps.cache-deps.outputs.cache-hit != 'true'
-      run: mix do deps.get, deps.compile
+      run: |
+        # shellcheck disable=SC1010
+        mix do deps.get, deps.compile
     - name: Check that mix.lock is up to date
       run: mix deps.get --check-locked
       if: ${{ matrix.lint }}
