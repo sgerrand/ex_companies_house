@@ -1,5 +1,5 @@
 defmodule CompaniesHouse.Client.ReqTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   doctest CompaniesHouse.Client.Req
 
