@@ -77,6 +77,15 @@ defmodule CompaniesHouse do
   end
 
   # Search
+
+  @doc """
+  Searches for companies matching the given query string.
+
+  Returns the full response envelope, including pagination fields such as
+  `"total_results"` and `"start_index"` alongside `"items"`. This differs
+  from the list functions (e.g. `list_company_officers/3`) which extract
+  only the items array.
+  """
   @spec search_companies(query :: String.t(), params :: keyword(), client :: Client.t()) ::
           Response.t()
   def search_companies(query, params \\ [], client \\ %Client{}) do
@@ -84,6 +93,14 @@ defmodule CompaniesHouse do
     |> handle_response()
   end
 
+  @doc """
+  Searches for officers matching the given query string.
+
+  Returns the full response envelope, including pagination fields such as
+  `"total_results"` and `"start_index"` alongside `"items"`. This differs
+  from the list functions (e.g. `list_company_officers/3`) which extract
+  only the items array.
+  """
   @spec search_officers(query :: String.t(), params :: keyword(), client :: Client.t()) ::
           Response.t()
   def search_officers(query, params \\ [], client \\ %Client{}) do
