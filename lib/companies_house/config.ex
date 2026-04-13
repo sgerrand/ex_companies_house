@@ -22,14 +22,6 @@ defmodule CompaniesHouse.Config do
   end
 
   @doc """
-  Puts a new key value to the configuration.
-  """
-  @spec put(t(), atom(), any()) :: t()
-  def put(config, key, value) do
-    Keyword.put(config, key, value)
-  end
-
-  @doc """
   Raise a ConfigError exception.
   """
   @spec raise_error(binary()) :: no_return

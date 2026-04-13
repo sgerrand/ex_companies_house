@@ -43,13 +43,6 @@ defmodule CompaniesHouse.ConfigTest do
     end
   end
 
-  describe "put/3" do
-    test "inserts key value pair" do
-      config = [something: "some value"]
-      assert Config.put(config, :key, 1) == [key: 1, something: "some value"]
-    end
-  end
-
   describe "raise_error/1" do
     test "raises expected exception" do
       assert_raise Config.ConfigError, "some specific error", fn ->
