@@ -94,7 +94,7 @@ defmodule CompaniesHouseTest do
          %{
            status: 200,
            body: %{
-             items: [
+             "items" => [
                %{
                  category: "some category",
                  date: "some date",
@@ -184,7 +184,7 @@ defmodule CompaniesHouseTest do
         assert path == "/company/12345678/persons-with-significant-control"
         assert client == %Client{environment: :sandbox}
 
-        {:ok, %{status: 200, body: %{items: [%{name: "Jane Bloggs"}, %{name: "John Doe"}]}}}
+        {:ok, %{status: 200, body: %{"items" => [%{name: "Jane Bloggs"}, %{name: "John Doe"}]}}}
       end)
 
       assert {:ok, [%{name: "Jane Bloggs"}, %{name: "John Doe"}]} =
@@ -230,7 +230,7 @@ defmodule CompaniesHouseTest do
         assert path == "/company/12345678/officers"
         assert client == %Client{environment: :sandbox}
 
-        {:ok, %{status: 200, body: %{items: [%{name: "Jane Bloggs"}, %{name: "John Doe"}]}}}
+        {:ok, %{status: 200, body: %{"items" => [%{name: "Jane Bloggs"}, %{name: "John Doe"}]}}}
       end)
 
       assert {:ok, [%{name: "Jane Bloggs"}, %{name: "John Doe"}]} =
