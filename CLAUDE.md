@@ -60,12 +60,12 @@ Tests use **Mox** for unit tests (mock the `Client` behaviour) and **Bypass** fo
 
 - Tests that mutate application env must use `async: false`.
 - List endpoints extract the `items` key automatically; tests should reflect this.
-- `CompaniesHouse.Response` is excluded from coverage (it's a one-line type alias).
+- `CompaniesHouse.Response` is excluded from coverage (it's a type-only module).
 
 ## Conventions
 
 - Environments: `:sandbox` (default, safe) and `:live`.
-- Non-200 HTTP responses surface as `{:error, {status_code, body}}`.
+- Non-200 HTTP responses surface as `{:error, {status_code, body}}`; network/transport failures surface as `{:error, exception}`. Both shapes are captured by `Response.error()`.
 - List endpoints return `{:ok, [item]}` by extracting `body["items"]`.
 - No Ecto—don't add it. Data is plain maps from JSON responses.
 - All public functions have `@doc`, `@spec`, and doctests where applicable.
