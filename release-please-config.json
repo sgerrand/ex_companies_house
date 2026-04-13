@@ -1,0 +1,18 @@
+{
+  "packages": {
+    ".": {
+      "release-type": "elixir",
+      "changelog-path": "CHANGELOG.md",
+      "changelog-sections": [
+        {"type": "feat", "section": "Added"},
+        {"type": "fix", "section": "Fixed"},
+        {"type": "perf", "section": "Changed"},
+        {"type": "revert", "section": "Fixed"},
+        {"type": "docs", "section": "Changed"},
+        {"type": "refactor", "section": "Changed"},
+        {"type": "chore", "section": "Changed", "hidden": true},
+        {"type": "deps", "section": "Changed"}
+      ]
+    }
+  }
+}
