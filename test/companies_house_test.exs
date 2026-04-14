@@ -536,4 +536,197 @@ defmodule CompaniesHouseTest do
                CompaniesHouse.search_officers("some unknown officer")
     end
   end
+
+  describe "list_charges/3" do
+    test "returns list of charges when successful" do
+      expect(MockHTTPClient, :get, fn path, _params, client ->
+        assert path == "/company/12345678/charges"
+        assert client == %Client{environment: :sandbox}
+
+        {:ok,
+         %{
+           status: 200,
+           body: %{"items" => [%{"charge_number" => 1}, %{"charge_number" => 2}]}
+         }}
+      end)
+
+      assert {:ok, [%{"charge_number" => 1}, %{"charge_number" => 2}]} =
+               CompaniesHouse.list_charges("12345678")
+    end
+
+    test "returns error when request fails" do
+      expect(MockHTTPClient, :get, fn _path, _params, _client ->
+        {:ok, %{status: 404, body: %{"error" => "Company not found"}}}
+      end)
+
+      assert {:error, {404, %{"error" => "Company not found"}}} =
+               CompaniesHouse.list_charges("12345678")
+    end
+  end
+
+  describe "get_charge/3" do
+    test "returns charge when successful" do
+      expect(MockHTTPClient, :get, fn path, client ->
+        assert path == "/company/12345678/charges/abc123"
+        assert client == %Client{environment: :sandbox}
+
+        {:ok, %{status: 200, body: %{"charge_number" => 1, "status" => "outstanding"}}}
+      end)
+
+      assert {:ok, %{"charge_number" => 1, "status" => "outstanding"}} =
+               CompaniesHouse.get_charge("12345678", "abc123")
+    end
+
+    test "returns error when request fails" do
+      expect(MockHTTPClient, :get, fn _path, _client ->
+        {:ok, %{status: 404, body: %{"error" => "Charge not found"}}}
+      end)
+
+      assert {:error, {404, %{"error" => "Charge not found"}}} =
+               CompaniesHouse.get_charge("12345678", "abc123")
+    end
+  end
+
+  describe "get_insolvency/2" do
+    test "returns insolvency details when successful" do
+      expect(MockHTTPClient, :get, fn path, client ->
+        assert path == "/company/12345678/insolvency"
+        assert client == %Client{environment: :sandbox}
+
+        {:ok, %{status: 200, body: %{"cases" => [%{"type" => "administration"}]}}}
+      end)
+
+      assert {:ok, %{"cases" => [%{"type" => "administration"}]}} =
+               CompaniesHouse.get_insolvency("12345678")
+    end
+
+    test "returns error when request fails" do
+      expect(MockHTTPClient, :get, fn _path, _client ->
+        {:ok, %{status: 404, body: %{"error" => "Company not found"}}}
+      end)
+
+      assert {:error, {404, %{"error" => "Company not found"}}} =
+               CompaniesHouse.get_insolvency("12345678")
+    end
+  end
+
+  describe "get_exemptions/2" do
+    test "returns exemptions when successful" do
+      expect(MockHTTPClient, :get, fn path, client ->
+        assert path == "/company/12345678/exemptions"
+        assert client == %Client{environment: :sandbox}
+
+        {:ok,
+         %{
+           status: 200,
+           body: %{"exemptions" => %{"psc_exempt_as_trading_on_uk_regulated_market" => %{}}}
+         }}
+      end)
+
+      assert {:ok, %{"exemptions" => %{"psc_exempt_as_trading_on_uk_regulated_market" => %{}}}} =
+               CompaniesHouse.get_exemptions("12345678")
+    end
+
+    test "returns error when request fails" do
+      expect(MockHTTPClient, :get, fn _path, _client ->
+        {:ok, %{status: 404, body: %{"error" => "Company not found"}}}
+      end)
+
+      assert {:error, {404, %{"error" => "Company not found"}}} =
+               CompaniesHouse.get_exemptions("12345678")
+    end
+  end
+
+  describe "list_uk_establishments/3" do
+    test "returns list of UK establishments when successful" do
+      expect(MockHTTPClient, :get, fn path, _params, client ->
+        assert path == "/company/12345678/uk-establishments"
+        assert client == %Client{environment: :sandbox}
+
+        {:ok,
+         %{
+           status: 200,
+           body: %{
+             "items" => [%{"company_number" => "BR000001"}, %{"company_number" => "BR000002"}]
+           }
+         }}
+      end)
+
+      assert {:ok, [%{"company_number" => "BR000001"}, %{"company_number" => "BR000002"}]} =
+               CompaniesHouse.list_uk_establishments("12345678")
+    end
+
+    test "returns error when request fails" do
+      expect(MockHTTPClient, :get, fn _path, _params, _client ->
+        {:ok, %{status: 404, body: %{"error" => "Company not found"}}}
+      end)
+
+      assert {:error, {404, %{"error" => "Company not found"}}} =
+               CompaniesHouse.list_uk_establishments("12345678")
+    end
+  end
+
+  describe "list_officer_appointments/3" do
+    test "returns list of officer appointments when successful" do
+      expect(MockHTTPClient, :get, fn path, _params, client ->
+        assert path == "/officers/officer123/appointments"
+        assert client == %Client{environment: :sandbox}
+
+        {:ok,
+         %{
+           status: 200,
+           body: %{"items" => [%{"appointed_to" => %{"company_number" => "12345678"}}]}
+         }}
+      end)
+
+      assert {:ok, [%{"appointed_to" => %{"company_number" => "12345678"}}]} =
+               CompaniesHouse.list_officer_appointments("officer123")
+    end
+
+    test "returns error when request fails" do
+      expect(MockHTTPClient, :get, fn _path, _params, _client ->
+        {:ok, %{status: 404, body: %{"error" => "Officer not found"}}}
+      end)
+
+      assert {:error, {404, %{"error" => "Officer not found"}}} =
+               CompaniesHouse.list_officer_appointments("officer123")
+    end
+  end
+
+  describe "search_disqualified_officers/3" do
+    test "returns search results when successful" do
+      expect(MockHTTPClient, :get, fn path, params, client ->
+        assert path == "/search/disqualified-officers"
+        assert params == [q: "John Doe", items_per_page: 10]
+        assert client == %Client{environment: :sandbox}
+
+        {:ok,
+         %{
+           status: 200,
+           body: %{
+             "items" => [%{"name" => "John Doe"}],
+             "total_results" => 1,
+             "start_index" => 0
+           }
+         }}
+      end)
+
+      assert {:ok,
+              %{
+                "items" => [%{"name" => "John Doe"}],
+                "total_results" => 1,
+                "start_index" => 0
+              }} =
+               CompaniesHouse.search_disqualified_officers("John Doe", items_per_page: 10)
+    end
+
+    test "returns error when request fails" do
+      expect(MockHTTPClient, :get, fn _path, _params, _client ->
+        {:ok, %{status: 404, body: %{"error" => "Officer not found"}}}
+      end)
+
+      assert {:error, {404, %{"error" => "Officer not found"}}} =
+               CompaniesHouse.search_disqualified_officers("Unknown Person")
+    end
+  end
 end

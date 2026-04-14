@@ -39,7 +39,7 @@ Activated by `bin/setup`. Hooks run in parallel on staged files:
 This is an Elixir HTTP client library for the [Companies House API](https://developer-specs.company-information.service.gov.uk/) (UK government company data). It is structured in layers:
 
 ```text
-CompaniesHouse           ← Public API (11 functions: get_, list_, search_)
+CompaniesHouse           ← Public API (18 functions: get_, list_, search_)
     ↓
 CompaniesHouse.Client    ← Behaviour + struct (environment: :sandbox | :live)
     ↓
