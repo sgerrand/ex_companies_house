@@ -6,6 +6,26 @@ adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- %% CHANGELOG_ENTRIES %% -->
 
+## [0.3.0](https://github.com/sgerrand/ex_companies_house/compare/v0.2.1...v0.3.0) (2026-04-14)
+
+
+### Added
+
+* add charges, insolvency, exemptions, UK establishments, and officer search endpoints ([#72](https://github.com/sgerrand/ex_companies_house/issues/72)) ([6dda9dc](https://github.com/sgerrand/ex_companies_house/commit/6dda9dc3a902682297c22348827a059f0159787d))
+* add stream_* functions for auto-paginating list endpoints ([#69](https://github.com/sgerrand/ex_companies_house/issues/69)) ([2edfe85](https://github.com/sgerrand/ex_companies_house/commit/2edfe857b0fb8c9c5756a174f46e3e8b9bf0c2e6))
+* emit telemetry events around HTTP requests ([#70](https://github.com/sgerrand/ex_companies_house/issues/70)) ([7500cd2](https://github.com/sgerrand/ex_companies_house/commit/7500cd2e386cbab141c67fca710db0c5c9b50309))
+
+
+### Fixed
+
+* narrow Response.t error type from any() to concrete union ([#74](https://github.com/sgerrand/ex_companies_house/issues/74)) ([6771124](https://github.com/sgerrand/ex_companies_house/commit/67711248fb3e56b8216a9f4c020999f89e2b2654))
+* widen Response.t() success type to include list return from list_* functions ([#75](https://github.com/sgerrand/ex_companies_house/issues/75)) ([2457d40](https://github.com/sgerrand/ex_companies_house/commit/2457d40f9598cc6025686a1383d9b461f2d324ad))
+
+
+### Changed
+
+* document list vs search return value asymmetry in moduledoc ([#73](https://github.com/sgerrand/ex_companies_house/issues/73)) ([e06d495](https://github.com/sgerrand/ex_companies_house/commit/e06d4956f86b2d51e3c965c7e05a8b8ab5b7748f))
+
 ## [0.2.1](https://github.com/sgerrand/ex_companies_house/compare/v0.2.0...v0.2.1) (2026-04-13)
 
 
