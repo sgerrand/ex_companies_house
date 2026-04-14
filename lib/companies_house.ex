@@ -20,6 +20,23 @@ defmodule CompaniesHouse do
       # Use the live environment
       client = CompaniesHouse.Client.new(:live)
       {:ok, officers} = CompaniesHouse.list_company_officers("00000006", [], client)
+
+  ## Streaming / auto-pagination
+
+  The `stream_*` functions automatically paginate through all results, fetching
+  100 items per page and yielding each item individually. They return a lazy
+  `Stream` (an `Enumerable`), so you can pipe them into `Enum` functions:
+
+      # Collect all officers for a company
+      all_officers = CompaniesHouse.stream_company_officers("00000006") |> Enum.to_list()
+
+      # Stream lazily — only fetch pages as needed
+      CompaniesHouse.stream_filing_history("00000006")
+      |> Stream.filter(&(&1["type"] == "AA"))
+      |> Enum.take(5)
+
+  If the API returns an error for any page, that page is silently skipped and
+  the stream stops.
   """
 
   alias CompaniesHouse.Client
@@ -95,6 +112,54 @@ defmodule CompaniesHouse do
     |> handle_response()
   end
 
+  # Streaming / auto-pagination
+
+  @doc """
+  Streams all officers for a company, automatically paginating through results.
+
+  Fetches up to 100 items per page and yields each officer individually. The
+  stream is lazy: pages are only fetched as items are consumed.
+
+  Returns an `Enumerable` (a lazy `Stream`).
+  """
+  @spec stream_company_officers(String.t(), keyword(), Client.t()) :: Enumerable.t()
+  def stream_company_officers(company_number, params \\ [], client \\ %Client{}) do
+    stream_paginated("/company/#{company_number}/officers", params, client)
+  end
+
+  @doc """
+  Streams all filing history entries for a company, automatically paginating
+  through results.
+
+  Fetches up to 100 items per page and yields each filing history entry
+  individually. The stream is lazy: pages are only fetched as items are consumed.
+
+  Returns an `Enumerable` (a lazy `Stream`).
+  """
+  @spec stream_filing_history(String.t(), keyword(), Client.t()) :: Enumerable.t()
+  def stream_filing_history(company_number, params \\ [], client \\ %Client{}) do
+    stream_paginated("/company/#{company_number}/filing-history", params, client)
+  end
+
+  @doc """
+  Streams all persons with significant control for a company, automatically
+  paginating through results.
+
+  Fetches up to 100 items per page and yields each person individually. The
+  stream is lazy: pages are only fetched as items are consumed.
+
+  Returns an `Enumerable` (a lazy `Stream`).
+  """
+  @spec stream_persons_with_significant_control(String.t(), keyword(), Client.t()) ::
+          Enumerable.t()
+  def stream_persons_with_significant_control(company_number, params \\ [], client \\ %Client{}) do
+    stream_paginated(
+      "/company/#{company_number}/persons-with-significant-control",
+      params,
+      client
+    )
+  end
+
   # Search
 
   @doc """
@@ -125,6 +190,29 @@ defmodule CompaniesHouse do
   def search_officers(query, params \\ [], client \\ %Client{}) do
     http_client().get("/search/officers", [q: query] ++ params, client)
     |> handle_response()
+  end
+
+  defp stream_paginated(path, params, client) do
+    Stream.unfold({0, false}, fn
+      {_start, true} ->
+        nil
+
+      {start_index, false} ->
+        merged_params = Keyword.merge(params, start_index: start_index, items_per_page: 100)
+
+        case http_client().get(path, merged_params, client) |> handle_response() do
+          {:ok, %{"items" => items, "total_results" => total}} ->
+            done = start_index + length(items) >= total
+            {items, {start_index + length(items), done}}
+
+          {:ok, %{"items" => items}} ->
+            {items, {start_index + length(items), true}}
+
+          _ ->
+            nil
+        end
+    end)
+    |> Stream.flat_map(& &1)
   end
 
   defp maybe_extract_items({:ok, %{"items" => items}}), do: {:ok, items}
