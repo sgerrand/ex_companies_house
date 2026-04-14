@@ -40,6 +40,42 @@ defmodule CompaniesHouse do
 
   Search: `search_companies/3`, `search_officers/3`, `search_disqualified_officers/3`
 
+  Streaming: `stream_company_officers/3`, `stream_filing_history/3`,
+  `stream_persons_with_significant_control/3`
+
+  ## Return values
+
+  All functions return `{:ok, result}` on success or `{:error, reason}` on failure.
+
+  ### List functions vs search functions
+
+  `list_*` and `get_*` functions return just the data:
+
+  - `get_*` — returns `{:ok, map()}` with the resource
+  - `list_*` — returns `{:ok, [map()]}` with the items array extracted from the response envelope
+
+  `search_*` functions return the full response envelope so that pagination
+  metadata is accessible:
+
+  - `search_*` — returns `{:ok, map()}` with the full envelope, including
+    `"items"`, `"total_results"`, `"start_index"`, and `"items_per_page"`
+
+  For example:
+
+      {:ok, items} = CompaniesHouse.list_company_officers("00000006")
+      # items is a list of officer maps
+
+      {:ok, envelope} = CompaniesHouse.search_companies("Acme")
+      # envelope["items"] contains the results
+      # envelope["total_results"] contains the total count
+
+  ### Errors
+
+  Errors take one of two shapes:
+
+  - `{:error, {status_code, body}}` — the API returned a non-2xx HTTP status
+  - `{:error, exception}` — a network or transport failure (e.g. timeout)
+
   ## Streaming / auto-pagination
 
   The `stream_*` functions automatically paginate through all results, fetching
