@@ -3,5 +3,5 @@ defmodule CompaniesHouse.Response do
   The response tuple.
   """
 
-  @type t :: {:ok, map()} | {:error, any()}
+  @type t :: {:ok, map() | [map()]} | {:error, any()}
 end
