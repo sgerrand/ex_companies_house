@@ -32,8 +32,9 @@ defmodule CompaniesHouse.Client.Req do
   """
   @spec delete(path :: nonempty_binary, client :: Client.t()) :: Response.t()
   def delete(path, client \\ %Client{}) do
-    new(client)
-    |> Req.delete(url: path)
+    with_telemetry(:delete, path, client, fn ->
+      new(client) |> Req.delete(url: path)
+    end)
   end
 
   @impl true
@@ -42,8 +43,9 @@ defmodule CompaniesHouse.Client.Req do
   """
   @spec get(path :: nonempty_binary, client :: Client.t()) :: Response.t()
   def get(path, client) do
-    new(client)
-    |> Req.get(url: path)
+    with_telemetry(:get, path, client, fn ->
+      new(client) |> Req.get(url: path)
+    end)
   end
 
   @impl true
@@ -53,8 +55,9 @@ defmodule CompaniesHouse.Client.Req do
   @spec get(path :: nonempty_binary, params :: keyword(), client :: Client.t()) ::
           Response.t()
   def get(path, params, client) do
-    new(client)
-    |> Req.get(url: path, params: params)
+    with_telemetry(:get, path, client, fn ->
+      new(client) |> Req.get(url: path, params: params)
+    end)
   end
 
   @impl true
@@ -64,8 +67,9 @@ defmodule CompaniesHouse.Client.Req do
   @spec post(path :: nonempty_binary, params :: keyword(), client :: Client.t()) ::
           Response.t()
   def post(path, params \\ [], client \\ %Client{}) do
-    new(client)
-    |> Req.post(url: path, params: params)
+    with_telemetry(:post, path, client, fn ->
+      new(client) |> Req.post(url: path, params: params)
+    end)
   end
 
   @impl true
@@ -75,8 +79,9 @@ defmodule CompaniesHouse.Client.Req do
   @spec put(path :: nonempty_binary, params :: keyword(), client :: Client.t()) ::
           Response.t()
   def put(path, params \\ [], client \\ %Client{}) do
-    new(client)
-    |> Req.put(url: path, params: params)
+    with_telemetry(:put, path, client, fn ->
+      new(client) |> Req.put(url: path, params: params)
+    end)
   end
 
   defp base_url(:live), do: @base_live_url
@@ -84,4 +89,35 @@ defmodule CompaniesHouse.Client.Req do
 
   defp base_url(env),
     do: raise(ArgumentError, "Unknown environment: #{inspect(env)}")
+
+  defp with_telemetry(method, path, client, fun) do
+    metadata = %{method: method, path: path, environment: client.environment}
+    start = System.monotonic_time()
+
+    :telemetry.execute(
+      [:companies_house, :request, :start],
+      %{system_time: System.system_time()},
+      metadata
+    )
+
+    result = fun.()
+
+    case result do
+      {:ok, response} ->
+        :telemetry.execute(
+          [:companies_house, :request, :stop],
+          %{duration: System.monotonic_time() - start},
+          Map.put(metadata, :status, response.status)
+        )
+
+      {:error, reason} ->
+        :telemetry.execute(
+          [:companies_house, :request, :exception],
+          %{duration: System.monotonic_time() - start},
+          Map.merge(metadata, %{kind: :error, reason: reason})
+        )
+    end
+
+    result
+  end
 end
