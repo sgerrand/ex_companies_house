@@ -274,6 +274,188 @@ defmodule CompaniesHouseTest do
     end
   end
 
+  describe "stream_company_officers/3" do
+    test "streams all officers across multiple pages" do
+      expect(MockHTTPClient, :get, fn path, params, client ->
+        assert path == "/company/12345678/officers"
+        assert params[:start_index] == 0
+        assert params[:items_per_page] == 100
+        assert client == %Client{environment: :sandbox}
+
+        {:ok,
+         %{
+           status: 200,
+           body: %{
+             "items" => [%{"name" => "Officer A"}, %{"name" => "Officer B"}],
+             "total_results" => 3
+           }
+         }}
+      end)
+
+      expect(MockHTTPClient, :get, fn path, params, _client ->
+        assert path == "/company/12345678/officers"
+        assert params[:start_index] == 2
+        assert params[:items_per_page] == 100
+
+        {:ok,
+         %{
+           status: 200,
+           body: %{
+             "items" => [%{"name" => "Officer C"}],
+             "total_results" => 3
+           }
+         }}
+      end)
+
+      result = CompaniesHouse.stream_company_officers("12345678") |> Enum.to_list()
+
+      assert result == [
+               %{"name" => "Officer A"},
+               %{"name" => "Officer B"},
+               %{"name" => "Officer C"}
+             ]
+    end
+
+    test "streams all officers when total_results is absent" do
+      expect(MockHTTPClient, :get, fn _path, params, _client ->
+        assert params[:start_index] == 0
+
+        {:ok,
+         %{
+           status: 200,
+           body: %{"items" => [%{"name" => "Officer A"}]}
+         }}
+      end)
+
+      result = CompaniesHouse.stream_company_officers("12345678") |> Enum.to_list()
+      assert result == [%{"name" => "Officer A"}]
+    end
+
+    test "stops stream on API error" do
+      expect(MockHTTPClient, :get, fn _path, _params, _client ->
+        {:ok, %{status: 404, body: %{"error" => "Company not found"}}}
+      end)
+
+      result = CompaniesHouse.stream_company_officers("12345678") |> Enum.to_list()
+      assert result == []
+    end
+
+    test "merges caller-supplied params" do
+      expect(MockHTTPClient, :get, fn path, params, _client ->
+        assert path == "/company/12345678/officers"
+        assert params[:register_view] == "directors"
+        assert params[:items_per_page] == 100
+
+        {:ok,
+         %{
+           status: 200,
+           body: %{
+             "items" => [%{"name" => "Director A"}],
+             "total_results" => 1
+           }
+         }}
+      end)
+
+      result =
+        CompaniesHouse.stream_company_officers("12345678", register_view: "directors")
+        |> Enum.to_list()
+
+      assert result == [%{"name" => "Director A"}]
+    end
+  end
+
+  describe "stream_filing_history/3" do
+    test "streams all filing history entries across multiple pages" do
+      expect(MockHTTPClient, :get, fn path, params, _client ->
+        assert path == "/company/12345678/filing-history"
+        assert params[:start_index] == 0
+        assert params[:items_per_page] == 100
+
+        {:ok,
+         %{
+           status: 200,
+           body: %{
+             "items" => [%{"type" => "AA"}, %{"type" => "CS01"}],
+             "total_results" => 3
+           }
+         }}
+      end)
+
+      expect(MockHTTPClient, :get, fn _path, params, _client ->
+        assert params[:start_index] == 2
+
+        {:ok,
+         %{
+           status: 200,
+           body: %{
+             "items" => [%{"type" => "TM01"}],
+             "total_results" => 3
+           }
+         }}
+      end)
+
+      result = CompaniesHouse.stream_filing_history("12345678") |> Enum.to_list()
+      assert result == [%{"type" => "AA"}, %{"type" => "CS01"}, %{"type" => "TM01"}]
+    end
+
+    test "stops stream on API error" do
+      expect(MockHTTPClient, :get, fn _path, _params, _client ->
+        {:ok, %{status: 404, body: %{"error" => "Company not found"}}}
+      end)
+
+      result = CompaniesHouse.stream_filing_history("12345678") |> Enum.to_list()
+      assert result == []
+    end
+  end
+
+  describe "stream_persons_with_significant_control/3" do
+    test "streams all PSCs across multiple pages" do
+      expect(MockHTTPClient, :get, fn path, params, _client ->
+        assert path == "/company/12345678/persons-with-significant-control"
+        assert params[:start_index] == 0
+        assert params[:items_per_page] == 100
+
+        {:ok,
+         %{
+           status: 200,
+           body: %{
+             "items" => [%{"name" => "Jane Bloggs"}],
+             "total_results" => 2
+           }
+         }}
+      end)
+
+      expect(MockHTTPClient, :get, fn _path, params, _client ->
+        assert params[:start_index] == 1
+
+        {:ok,
+         %{
+           status: 200,
+           body: %{
+             "items" => [%{"name" => "John Doe"}],
+             "total_results" => 2
+           }
+         }}
+      end)
+
+      result =
+        CompaniesHouse.stream_persons_with_significant_control("12345678") |> Enum.to_list()
+
+      assert result == [%{"name" => "Jane Bloggs"}, %{"name" => "John Doe"}]
+    end
+
+    test "stops stream on API error" do
+      expect(MockHTTPClient, :get, fn _path, _params, _client ->
+        {:ok, %{status: 404, body: %{"error" => "Company not found"}}}
+      end)
+
+      result =
+        CompaniesHouse.stream_persons_with_significant_control("12345678") |> Enum.to_list()
+
+      assert result == []
+    end
+  end
+
   describe "search_companies/3" do
     test "returns search results when successful" do
       expect(MockHTTPClient, :get, fn path, params, client ->
