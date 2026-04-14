@@ -85,7 +85,7 @@ config :companies_house, environment: :live
 
 ### Return values
 
-- `get_*` and `list_*` return `{:ok, map()} | {:ok, [map()]} | {:error, {status, body}}`.
+- `get_*` and `list_*` return `{:ok, map()}` or `{:ok, [map()]}` on success. Errors are either `{:error, {status_code, body}}` for non-2xx HTTP responses or `{:error, exception}` for network/transport failures (e.g. timeout, connection refused).
 - `search_*` return the full response envelope (including `"total_results"` and `"start_index"`), not just the items array.
 - `stream_*` return a lazy `Enumerable` that auto-paginates. Pipe into `Enum` or `Stream` functions.
 
