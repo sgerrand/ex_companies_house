@@ -39,7 +39,7 @@ Activated by `bin/setup`. Hooks run in parallel on staged files:
 This is an Elixir HTTP client library for the [Companies House API](https://developer-specs.company-information.service.gov.uk/) (UK government company data). It is structured in layers:
 
 ```text
-CompaniesHouse           ← Public API (11 functions: get_, list_, search_)
+CompaniesHouse           ← Public API (20 functions: get_, list_, search_, stream_)
     ↓
 CompaniesHouse.Client    ← Behaviour + struct (environment: :sandbox | :live)
     ↓
@@ -67,6 +67,8 @@ Tests use **Mox** for unit tests (mock the `Client` behaviour) and **Bypass** fo
 - Environments: `:sandbox` (default, safe) and `:live`.
 - Non-200 HTTP responses surface as `{:error, {status_code, body}}`; network/transport failures surface as `{:error, exception}`. Both shapes are captured by `Response.error()`.
 - List endpoints return `{:ok, [item]}` by extracting `body["items"]`.
+- Search endpoints return `{:ok, map()}` with the full response envelope (pagination fields included alongside `"items"`).
+- `stream_*` functions return `Enumerable.t()` (a lazy `Stream`), not `Response.t()`. They auto-paginate at 100 items per page and stop silently on API error.
 - No Ecto—don't add it. Data is plain maps from JSON responses.
 - All public functions have `@doc`, `@spec`, and doctests where applicable.
 
