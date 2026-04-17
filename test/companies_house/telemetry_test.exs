@@ -22,15 +22,11 @@ defmodule CompaniesHouse.TelemetryTest do
 
     @tag path: "/company/12345678"
     test "emits start event before the request", c do
-      test_pid = self()
-
       :telemetry.attach(
         @handler_id,
         [:companies_house, :request, :start],
-        fn _event, measurements, metadata, _config ->
-          send(test_pid, {:telemetry_start, measurements, metadata})
-        end,
-        nil
+        &__MODULE__.handle_start/4,
+        self()
       )
 
       Bypass.expect_once(c.bypass, "GET", c.path, fn conn ->
@@ -51,15 +47,11 @@ defmodule CompaniesHouse.TelemetryTest do
 
     @tag path: "/company/12345678"
     test "emits stop event with status after successful request", c do
-      test_pid = self()
-
       :telemetry.attach(
         @handler_id,
         [:companies_house, :request, :stop],
-        fn _event, measurements, metadata, _config ->
-          send(test_pid, {:telemetry_stop, measurements, metadata})
-        end,
-        nil
+        &__MODULE__.handle_stop/4,
+        self()
       )
 
       Bypass.expect_once(c.bypass, "GET", c.path, fn conn ->
@@ -78,15 +70,11 @@ defmodule CompaniesHouse.TelemetryTest do
 
     @tag path: "/company/missing"
     test "emits stop event with status for non-2xx responses", c do
-      test_pid = self()
-
       :telemetry.attach(
         @handler_id,
         [:companies_house, :request, :stop],
-        fn _event, _measurements, metadata, _config ->
-          send(test_pid, {:telemetry_stop, metadata})
-        end,
-        nil
+        &__MODULE__.handle_stop_metadata_only/4,
+        self()
       )
 
       Bypass.expect_once(c.bypass, "GET", c.path, fn conn ->
@@ -102,15 +90,11 @@ defmodule CompaniesHouse.TelemetryTest do
 
   describe "[:companies_house, :request, :exception]" do
     test "emits exception event on transport error" do
-      test_pid = self()
-
       :telemetry.attach(
         @handler_id,
         [:companies_house, :request, :exception],
-        fn _event, measurements, metadata, _config ->
-          send(test_pid, {:telemetry_exception, measurements, metadata})
-        end,
-        nil
+        &__MODULE__.handle_exception/4,
+        self()
       )
 
       # Port 1 refuses connections immediately
@@ -123,6 +107,22 @@ defmodule CompaniesHouse.TelemetryTest do
       assert metadata.kind == :error
       assert metadata.environment == :sandbox
     end
+  end
+
+  def handle_start(_event, measurements, metadata, test_pid) do
+    send(test_pid, {:telemetry_start, measurements, metadata})
+  end
+
+  def handle_stop(_event, measurements, metadata, test_pid) do
+    send(test_pid, {:telemetry_stop, measurements, metadata})
+  end
+
+  def handle_stop_metadata_only(_event, _measurements, metadata, test_pid) do
+    send(test_pid, {:telemetry_stop, metadata})
+  end
+
+  def handle_exception(_event, measurements, metadata, test_pid) do
+    send(test_pid, {:telemetry_exception, measurements, metadata})
   end
 
   defp setup_bypass(%{path: path}) do
