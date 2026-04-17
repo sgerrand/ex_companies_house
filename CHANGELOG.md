@@ -6,6 +6,13 @@ adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- %% CHANGELOG_ENTRIES %% -->
 
+## [0.3.1](https://github.com/sgerrand/ex_companies_house/compare/v0.3.0...v0.3.1) (2026-04-17)
+
+
+### Fixed
+
+* **test:** silence mix test warnings ([#79](https://github.com/sgerrand/ex_companies_house/issues/79)) ([017cbe9](https://github.com/sgerrand/ex_companies_house/commit/017cbe9ed7b699ea5987ea6f1df3bf31f46b0206))
+
 ## [0.3.0](https://github.com/sgerrand/ex_companies_house/compare/v0.2.1...v0.3.0) (2026-04-14)
 
 
