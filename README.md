@@ -13,13 +13,15 @@ API](https://developer.companieshouse.gov.uk/).
 The package can be installed by adding `companies_house`
 to your list of dependencies in `mix.exs`:
 
+<!-- x-release-please-start-version -->
 ```elixir
 def deps do
   [
-    {:companies_house, "~> 0.2"}
+    {:companies_house, "~> 0.3.0"}
   ]
 end
 ```
+<!-- x-release-please-end -->
 
 ## Usage
 

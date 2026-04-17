@@ -12,6 +12,9 @@
         {"type": "refactor", "section": "Changed"},
         {"type": "chore", "section": "Changed", "hidden": true},
         {"type": "deps", "section": "Changed"}
+      ],
+      "extra-files": [
+        "README.md"
       ]
     }
   }
