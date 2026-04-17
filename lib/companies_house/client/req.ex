@@ -22,7 +22,8 @@ defmodule CompaniesHouse.Client.Req do
     Req.new(
       base_url: base_url(client.environment),
       auth: {:basic, Config.api_key()},
-      headers: [{"Accept", "application/json"}]
+      headers: [{"Accept", "application/json"}],
+      retry: false
     )
   end
 
