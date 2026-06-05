@@ -10,7 +10,7 @@ on:
 jobs:
   publish:
     name: Publish to Hex
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     env:
       HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
     steps:
