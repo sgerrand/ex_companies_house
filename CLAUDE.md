@@ -11,7 +11,7 @@ bin/setup   # installs Homebrew tools and activates Lefthook pre-commit hooks
 mix setup   # fetches Elixir dependencies
 ```
 
-`bin/setup` requires [Homebrew](https://brew.sh) and installs: `actionlint`, `check-jsonschema`, `lefthook`, `markdownlint-cli2`.
+`bin/setup` requires [Homebrew](https://brew.sh) and installs: `actionlint`, `check-jsonschema`, `lefthook`, and `mado` (via the `akiomik/mado` tap).
 
 ### Commands
 
@@ -32,7 +32,7 @@ Activated by `bin/setup`. Hooks run in parallel on staged files:
 - `check-dependabot` — validates `.github/dependabot.yml` against JSON schema
 - `check-release-please-config` — validates `release-please-config.json`
 - `check-release-please-manifest` — validates `.release-please-manifest.json`
-- `markdownlint` — lints `*.md` files (config in `.markdownlint-cli2.jsonc`)
+- `markdownlint` — runs `mado check` on staged `*.md` files (config in `mado.toml`)
 
 ## Architecture
 
