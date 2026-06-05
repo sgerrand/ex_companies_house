@@ -54,6 +54,15 @@ CompaniesHouse.Client.Req ← Req-based HTTP implementation
 
 **`CompaniesHouse.Config`** reads `:api_key` and `:environment` from application config, raising `ConfigError` for missing or invalid values.
 
+## Releases
+
+Releases are cut by [release-please](https://github.com/googleapis/release-please) via the [release-mate/action](https://github.com/release-mate/action) reusable workflow (`.github/workflows/release-please.yml`). Release-mate mints a short-lived GitHub App installation token instead of a PAT, so the workflow requires two org/repo secrets:
+
+- `RELEASE_MATE_CLIENT_ID` — Release Mate GitHub App Client ID
+- `RELEASE_MATE_PRIVATE_KEY` — PEM-encoded private key for the same app
+
+The legacy `RELEASE_PLEASE_PAT` secret is no longer used. Config/manifest paths default to `release-please-config.json` and `.release-please-manifest.json`.
+
 ## Testing
 
 Tests use **Mox** for unit tests (mock the `Client` behaviour) and **Bypass** for integration tests against `Client.Req` (real HTTP against a local server). The mock is configured in `config/config.exs` for the test environment.
