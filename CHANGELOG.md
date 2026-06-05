@@ -6,6 +6,18 @@ adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- %% CHANGELOG_ENTRIES %% -->
 
+## [0.3.2](https://github.com/sgerrand/ex_companies_house/compare/v0.3.1...v0.3.2) (2026-06-05)
+
+
+### Fixed
+
+* **deps:** bump the elixir group with 2 updates ([#81](https://github.com/sgerrand/ex_companies_house/issues/81)) ([f57c15d](https://github.com/sgerrand/ex_companies_house/commit/f57c15d4dda13ee86ac3794909f75e747f523b43))
+
+
+### Changed
+
+* document release-mate release workflow ([9a20d15](https://github.com/sgerrand/ex_companies_house/commit/9a20d158af11b5944e161483ccfe0e7933e56e83))
+
 ## [0.3.1](https://github.com/sgerrand/ex_companies_house/compare/v0.3.0...v0.3.1) (2026-04-17)
 
 
