@@ -100,7 +100,7 @@ defmodule CompaniesHouse do
   # Company Profile
   @spec get_company_profile(company_number :: String.t(), client :: Client.t()) :: Response.t()
   def get_company_profile(company_number, client \\ %Client{}) do
-    http_client().get("/company/#{company_number}", client)
+    Client.get("/company/#{company_number}", client)
     |> handle_response()
   end
 
@@ -108,7 +108,7 @@ defmodule CompaniesHouse do
   @spec get_registered_office_address(company_number :: String.t(), client :: Client.t()) ::
           Response.t()
   def get_registered_office_address(company_number, client \\ %Client{}) do
-    http_client().get("/company/#{company_number}/registered-office-address", client)
+    Client.get("/company/#{company_number}/registered-office-address", client)
     |> handle_response()
   end
 
@@ -119,28 +119,28 @@ defmodule CompaniesHouse do
           client :: Client.t()
         ) :: Response.t()
   def list_company_officers(company_number, params \\ [], client \\ %Client{}) do
-    http_client().get("/company/#{company_number}/officers", params, client)
+    Client.get("/company/#{company_number}/officers", params, client)
     |> handle_response()
     |> maybe_extract_items()
   end
 
   @spec get_officer_appointment(String.t(), String.t(), client :: Client.t()) :: Response.t()
   def get_officer_appointment(company_number, appointment_id, client \\ %Client{}) do
-    http_client().get("/company/#{company_number}/appointments/#{appointment_id}", client)
+    Client.get("/company/#{company_number}/appointments/#{appointment_id}", client)
     |> handle_response()
   end
 
   # Filing History
   @spec list_filing_history(String.t(), keyword(), client :: Client.t()) :: Response.t()
   def list_filing_history(company_number, params \\ [], client \\ %Client{}) do
-    http_client().get("/company/#{company_number}/filing-history", params, client)
+    Client.get("/company/#{company_number}/filing-history", params, client)
     |> handle_response()
     |> maybe_extract_items()
   end
 
   @spec get_filing_history(String.t(), String.t(), client :: Client.t()) :: Response.t()
   def get_filing_history(company_number, transaction_id, client \\ %Client{}) do
-    http_client().get("/company/#{company_number}/filing-history/#{transaction_id}", client)
+    Client.get("/company/#{company_number}/filing-history/#{transaction_id}", client)
     |> handle_response()
   end
 
@@ -148,7 +148,7 @@ defmodule CompaniesHouse do
   @spec list_persons_with_significant_control(String.t(), keyword(), client :: Client.t()) ::
           Response.t()
   def list_persons_with_significant_control(company_number, params \\ [], client \\ %Client{}) do
-    http_client().get(
+    Client.get(
       "/company/#{company_number}/persons-with-significant-control",
       params,
       client
@@ -160,7 +160,7 @@ defmodule CompaniesHouse do
   @spec get_person_with_significant_control(String.t(), String.t(), client :: Client.t()) ::
           Response.t()
   def get_person_with_significant_control(company_number, psc_id, client \\ %Client{}) do
-    http_client().get(
+    Client.get(
       "/company/#{company_number}/persons-with-significant-control/individual/#{psc_id}",
       client
     )
@@ -224,7 +224,7 @@ defmodule CompaniesHouse do
   """
   @spec list_charges(String.t(), keyword(), Client.t()) :: Response.t()
   def list_charges(company_number, params \\ [], client \\ %Client{}) do
-    http_client().get("/company/#{company_number}/charges", params, client)
+    Client.get("/company/#{company_number}/charges", params, client)
     |> handle_response()
     |> maybe_extract_items()
   end
@@ -234,7 +234,7 @@ defmodule CompaniesHouse do
   """
   @spec get_charge(String.t(), String.t(), Client.t()) :: Response.t()
   def get_charge(company_number, charge_id, client \\ %Client{}) do
-    http_client().get("/company/#{company_number}/charges/#{charge_id}", client)
+    Client.get("/company/#{company_number}/charges/#{charge_id}", client)
     |> handle_response()
   end
 
@@ -245,7 +245,7 @@ defmodule CompaniesHouse do
   """
   @spec get_insolvency(String.t(), Client.t()) :: Response.t()
   def get_insolvency(company_number, client \\ %Client{}) do
-    http_client().get("/company/#{company_number}/insolvency", client)
+    Client.get("/company/#{company_number}/insolvency", client)
     |> handle_response()
   end
 
@@ -256,7 +256,7 @@ defmodule CompaniesHouse do
   """
   @spec get_exemptions(String.t(), Client.t()) :: Response.t()
   def get_exemptions(company_number, client \\ %Client{}) do
-    http_client().get("/company/#{company_number}/exemptions", client)
+    Client.get("/company/#{company_number}/exemptions", client)
     |> handle_response()
   end
 
@@ -269,7 +269,7 @@ defmodule CompaniesHouse do
   """
   @spec list_uk_establishments(String.t(), keyword(), Client.t()) :: Response.t()
   def list_uk_establishments(company_number, params \\ [], client \\ %Client{}) do
-    http_client().get("/company/#{company_number}/uk-establishments", params, client)
+    Client.get("/company/#{company_number}/uk-establishments", params, client)
     |> handle_response()
     |> maybe_extract_items()
   end
@@ -283,7 +283,7 @@ defmodule CompaniesHouse do
   """
   @spec list_officer_appointments(String.t(), keyword(), Client.t()) :: Response.t()
   def list_officer_appointments(officer_id, params \\ [], client \\ %Client{}) do
-    http_client().get("/officers/#{officer_id}/appointments", params, client)
+    Client.get("/officers/#{officer_id}/appointments", params, client)
     |> handle_response()
     |> maybe_extract_items()
   end
@@ -301,7 +301,7 @@ defmodule CompaniesHouse do
   @spec search_companies(query :: String.t(), params :: keyword(), client :: Client.t()) ::
           Response.t()
   def search_companies(query, params \\ [], client \\ %Client{}) do
-    http_client().get("/search/companies", [q: query] ++ params, client)
+    Client.get("/search/companies", [q: query] ++ params, client)
     |> handle_response()
   end
 
@@ -316,7 +316,7 @@ defmodule CompaniesHouse do
   @spec search_officers(query :: String.t(), params :: keyword(), client :: Client.t()) ::
           Response.t()
   def search_officers(query, params \\ [], client \\ %Client{}) do
-    http_client().get("/search/officers", [q: query] ++ params, client)
+    Client.get("/search/officers", [q: query] ++ params, client)
     |> handle_response()
   end
 
@@ -330,7 +330,7 @@ defmodule CompaniesHouse do
   """
   @spec search_disqualified_officers(String.t(), keyword(), Client.t()) :: Response.t()
   def search_disqualified_officers(query, params \\ [], client \\ %Client{}) do
-    http_client().get("/search/disqualified-officers", [q: query] ++ params, client)
+    Client.get("/search/disqualified-officers", [q: query] ++ params, client)
     |> handle_response()
   end
 
@@ -342,10 +342,10 @@ defmodule CompaniesHouse do
       {start_index, false} ->
         merged_params = Keyword.merge(params, start_index: start_index, items_per_page: 100)
 
-        case http_client().get(path, merged_params, client) |> handle_response() do
+        case Client.get(path, merged_params, client) |> handle_response() do
           {:ok, %{"items" => items, "total_results" => total}} ->
-            done = start_index + length(items) >= total
-            {items, {start_index + length(items), done}}
+            next_index = start_index + length(items)
+            {items, {next_index, next_index >= total}}
 
           {:ok, %{"items" => items}} ->
             {items, {start_index + length(items), true}}
@@ -370,7 +370,4 @@ defmodule CompaniesHouse do
   end
 
   defp handle_response({:error, _} = error), do: error
-
-  @http_client Application.compile_env(:companies_house, :http_client, CompaniesHouse.Client.Req)
-  defp http_client, do: @http_client
 end

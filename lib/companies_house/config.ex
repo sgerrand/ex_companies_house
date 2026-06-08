@@ -16,9 +16,7 @@ defmodule CompaniesHouse.Config do
   """
   @spec get(atom(), any()) :: any()
   def get(key, default \\ nil) do
-    :companies_house
-    |> Application.get_all_env()
-    |> Keyword.get(key, default)
+    Application.get_env(:companies_house, key, default)
   end
 
   @doc """
