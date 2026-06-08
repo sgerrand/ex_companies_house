@@ -5,8 +5,6 @@ defmodule CompaniesHouse.Client.Req do
 
   @behaviour CompaniesHouse.Client
 
-  require Req
-
   alias CompaniesHouse.Client
   alias CompaniesHouse.Config
   alias CompaniesHouse.Response
