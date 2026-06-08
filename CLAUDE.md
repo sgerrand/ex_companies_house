@@ -80,5 +80,6 @@ Tests use **Mox** for unit tests (mock the `Client` behaviour) and **Bypass** fo
 - `stream_*` functions return `Enumerable.t()` (a lazy `Stream`), not `Response.t()`. They auto-paginate at 100 items per page and stop silently on API error.
 - No Ecto—don't add it. Data is plain maps from JSON responses.
 - All public functions have `@doc`, `@spec`, and doctests where applicable.
+- The `CompaniesHouse` facade reaches the HTTP layer via `Client.get/post/...` (the `defdelegate ... to: @impl_module` seam in `Client`). There is one indirection point — don't reintroduce a separate `compile_env(:http_client)` lookup in the facade.
 
 At the end of every change, update CLAUDE.md with anything useful that would have been helpful at the start.
