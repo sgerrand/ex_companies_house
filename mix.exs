@@ -16,6 +16,10 @@ defmodule CompaniesHouse.MixProject do
         ignore_modules: [CompaniesHouse.Response],
         tool: ExCoveralls
       ],
+      dialyzer: [
+        plt_core_path: "priv/plts",
+        plt_local_path: "priv/plts"
+      ],
 
       # Hex
       package: package(),
@@ -49,6 +53,7 @@ defmodule CompaniesHouse.MixProject do
       {:excoveralls, "~> 0.18", only: :test},
       {:mox, "~> 1.0", only: :test},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
       {:expublish, "~> 2.5", only: :dev, runtime: false}
     ]

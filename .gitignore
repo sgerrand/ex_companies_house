@@ -27,3 +27,7 @@ companies_house-*.tar
 
 # Ignore Expublish artefacts
 RELEASE.md
+
+# Dialyzer PLT files
+/priv/plts/*.plt
+/priv/plts/*.plt.hash
