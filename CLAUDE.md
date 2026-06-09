@@ -52,7 +52,7 @@ CompaniesHouse.Client.Req ← Req-based HTTP implementation
 
 **`CompaniesHouse.Client.Req`** builds the Req request with Basic Auth (API key from config), routes to sandbox or live base URL, and normalises responses: 200–299 → `{:ok, body}`, others → `{:error, {status, body}}`.
 
-**`CompaniesHouse.Config`** reads `:api_key` and `:environment` from application config, raising `ConfigError` for missing or invalid values.
+**`CompaniesHouse.Config`** reads `:api_key`, `:environment`, and `:retry` from application config, raising `ConfigError` for missing or invalid values. `:retry` defaults to `false` and is passed straight through to `Req` (e.g. `:safe_transient` to honour `Retry-After` on `429`/`503`). The canonical list of valid environments lives in `Config.valid_environments/0`; `Client` reads it at compile time so the two cannot drift.
 
 ## Releases
 

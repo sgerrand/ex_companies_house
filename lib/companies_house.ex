@@ -12,6 +12,12 @@ defmodule CompaniesHouse do
 
       config :companies_house, environment: :live
 
+  Retries are disabled by default. To retry transient failures (including `429`
+  rate-limit and `503` responses, honouring `Retry-After`), set `:retry`, which
+  is passed through to `Req`:
+
+      config :companies_house, retry: :safe_transient
+
   ## Usage
 
       # Fetch a company profile using the default (sandbox) client

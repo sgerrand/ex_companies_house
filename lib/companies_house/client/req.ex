@@ -14,6 +14,14 @@ defmodule CompaniesHouse.Client.Req do
 
   @doc """
   Creates a new client for interacting with the Companies House API.
+
+  Retry behaviour is read from the `:retry` application key and passed
+  straight to `Req` (see `Req.request/1`). It defaults to `false` (no
+  retries). Set it to enable resilience against transient failures and
+  rate limiting — `Req`'s `:safe_transient` honours `Retry-After` on `429`
+  and `503` responses:
+
+      config :companies_house, retry: :safe_transient
   """
   @spec new(client :: Client.t()) :: Req.Request.t()
   def new(client \\ %Client{}) do
@@ -21,7 +29,7 @@ defmodule CompaniesHouse.Client.Req do
       base_url: base_url(client.environment),
       auth: {:basic, Config.api_key()},
       headers: [{"Accept", "application/json"}],
-      retry: false
+      retry: Config.get(:retry, false)
     )
   end
 

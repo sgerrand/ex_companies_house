@@ -41,6 +41,17 @@ By default the client targets the sandbox environment. To use the live API:
 config :companies_house, environment: :live
 ```
 
+#### Retries
+
+By default no retries are performed. To retry transient failures — including
+`429` rate-limit and `503` responses, honouring their `Retry-After` header —
+set the `:retry` option, which is passed straight through to
+[`Req`](https://hexdocs.pm/req):
+
+```elixir
+config :companies_house, retry: :safe_transient
+```
+
 ### Available functions
 
 #### Company data

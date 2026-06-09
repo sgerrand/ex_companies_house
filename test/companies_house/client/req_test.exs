@@ -45,6 +45,17 @@ defmodule CompaniesHouse.Client.ReqTest do
       end
     end
 
+    test "disables retries by default" do
+      assert ReqClient.new().options.retry == false
+    end
+
+    test "reads retry behaviour from application config" do
+      Application.put_env(:companies_house, :retry, :safe_transient)
+      on_exit(fn -> Application.delete_env(:companies_house, :retry) end)
+
+      assert ReqClient.new().options.retry == :safe_transient
+    end
+
     test "raises error when api key is not configured" do
       assert Application.delete_env(:companies_house, :api_key) == :ok
 
