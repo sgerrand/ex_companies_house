@@ -201,8 +201,8 @@ defmodule CompaniesHouseTest do
     end
   end
 
-  describe "get_person_with_significant_control/3" do
-    test "returns person with significant control when successful" do
+  describe "get_person_with_significant_control/4" do
+    test "returns an individual person with significant control by default" do
       expect(MockHTTPClient, :get, fn path, client ->
         assert path == "/company/12345678/persons-with-significant-control/individual/987"
         assert client == %Client{environment: :sandbox}
@@ -212,6 +212,25 @@ defmodule CompaniesHouseTest do
 
       assert {:ok, %{name: "Jane Bloggs"}} =
                CompaniesHouse.get_person_with_significant_control("12345678", "987")
+    end
+
+    test "selects the path segment for a non-individual kind" do
+      expect(MockHTTPClient, :get, fn path, _client ->
+        assert path == "/company/12345678/persons-with-significant-control/corporate-entity/987"
+
+        {:ok, %{status: 200, body: %{name: "Acme Holdings Ltd"}}}
+      end)
+
+      assert {:ok, %{name: "Acme Holdings Ltd"}} =
+               CompaniesHouse.get_person_with_significant_control("12345678", "987",
+                 kind: :corporate_entity
+               )
+    end
+
+    test "raises for an unknown kind" do
+      assert_raise ArgumentError, ~r/Invalid PSC kind/, fn ->
+        CompaniesHouse.get_person_with_significant_control("12345678", "987", kind: :bogus)
+      end
     end
 
     test "returns error when request fails" do

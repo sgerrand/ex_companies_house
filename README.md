@@ -75,7 +75,7 @@ config :companies_house, retry: :safe_transient
 #### Persons with significant control
 
 - `list_persons_with_significant_control/3`
-- `get_person_with_significant_control/3`
+- `get_person_with_significant_control/4` (pass `kind:` for corporate-entity, legal-person, beneficial-owner, and super-secure PSCs)
 
 #### Charges
 

@@ -38,7 +38,7 @@ defmodule CompaniesHouse do
   Filing history: `list_filing_history/3`, `get_filing_history/3`
 
   Persons with significant control: `list_persons_with_significant_control/3`,
-  `get_person_with_significant_control/3`
+  `get_person_with_significant_control/4`
 
   Charges: `list_charges/3`, `get_charge/3`
 
@@ -163,11 +163,54 @@ defmodule CompaniesHouse do
     |> maybe_extract_items()
   end
 
-  @spec get_person_with_significant_control(String.t(), String.t(), client :: Client.t()) ::
+  @psc_kinds %{
+    individual: "individual",
+    corporate_entity: "corporate-entity",
+    legal_person: "legal-person",
+    individual_beneficial_owner: "individual-beneficial-owner",
+    corporate_entity_beneficial_owner: "corporate-entity-beneficial-owner",
+    legal_person_beneficial_owner: "legal-person-beneficial-owner",
+    super_secure: "super-secure",
+    super_secure_beneficial_owner: "super-secure-beneficial-owner"
+  }
+
+  @doc """
+  Returns a single person with significant control (PSC) for the company.
+
+  PSCs come in several kinds, each served from a different path. The `:kind`
+  option selects which and defaults to `:individual`:
+
+    * `:individual`
+    * `:corporate_entity`
+    * `:legal_person`
+    * `:individual_beneficial_owner`
+    * `:corporate_entity_beneficial_owner`
+    * `:legal_person_beneficial_owner`
+    * `:super_secure`
+    * `:super_secure_beneficial_owner`
+
+  Raises `ArgumentError` for an unknown kind.
+
+      # An individual PSC (the default)
+      CompaniesHouse.get_person_with_significant_control("00000006", "abc")
+
+      # A corporate-entity PSC
+      CompaniesHouse.get_person_with_significant_control("00000006", "abc",
+        kind: :corporate_entity
+      )
+  """
+  @spec get_person_with_significant_control(String.t(), String.t(), keyword(), Client.t()) ::
           Response.t()
-  def get_person_with_significant_control(company_number, psc_id, client \\ %Client{}) do
+  def get_person_with_significant_control(
+        company_number,
+        psc_id,
+        params \\ [],
+        client \\ %Client{}
+      ) do
+    segment = psc_kind_segment(Keyword.get(params, :kind, :individual))
+
     Client.get(
-      "/company/#{company_number}/persons-with-significant-control/individual/#{psc_id}",
+      "/company/#{company_number}/persons-with-significant-control/#{segment}/#{psc_id}",
       client
     )
     |> handle_response()
@@ -364,6 +407,17 @@ defmodule CompaniesHouse do
         end
     end)
     |> Stream.flat_map(& &1)
+  end
+
+  defp psc_kind_segment(kind) do
+    case Map.fetch(@psc_kinds, kind) do
+      {:ok, segment} ->
+        segment
+
+      :error ->
+        raise ArgumentError,
+              "Invalid PSC kind: #{inspect(kind)}. Must be one of: #{inspect(Map.keys(@psc_kinds))}"
+    end
   end
 
   defp maybe_extract_items({:ok, %{"items" => items}}), do: {:ok, items}
