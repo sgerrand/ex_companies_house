@@ -101,6 +101,7 @@ config :companies_house, retry: :safe_transient
 ### Return values
 
 - `get_*` and `list_*` return `{:ok, map()}` or `{:ok, [map()]}` on success. Errors are either `{:error, {status_code, body}}` for non-2xx HTTP responses or `{:error, exception}` for network/transport failures (e.g. timeout, connection refused).
+- `list_*` return only a **single page** of items and discard pagination metadata — they do not auto-paginate. Use the matching `stream_*` function to fetch every item across all pages.
 - `search_*` return the full response envelope (including `"total_results"` and `"start_index"`), not just the items array.
 - `stream_*` return a lazy `Enumerable` that auto-paginates. Pipe into `Enum` or `Stream` functions.
 

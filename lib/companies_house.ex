@@ -60,6 +60,16 @@ defmodule CompaniesHouse do
   - `get_*` — returns `{:ok, map()}` with the resource
   - `list_*` — returns `{:ok, [map()]}` with the items array extracted from the response envelope
 
+  > #### `list_*` returns a single page {: .warning}
+  >
+  > `list_*` functions do **not** auto-paginate. They return only the items
+  > from one response and discard the pagination metadata (`total_results`,
+  > `start_index`). When a company has more results than fit on a page, the
+  > remainder is not fetched. To retrieve every item across all pages, use the
+  > matching `stream_*` function where one exists
+  > (`stream_company_officers/3`, `stream_filing_history/3`,
+  > `stream_persons_with_significant_control/3`).
+
   `search_*` functions return the full response envelope so that pagination
   metadata is accessible:
 
@@ -119,6 +129,12 @@ defmodule CompaniesHouse do
   end
 
   # Officers
+  @doc """
+  Lists officers for the given company number.
+
+  Returns a single page of items extracted from the response envelope. Use
+  `stream_company_officers/3` to fetch every officer across all pages.
+  """
   @spec list_company_officers(
           company_number :: String.t(),
           params :: keyword(),
@@ -137,6 +153,12 @@ defmodule CompaniesHouse do
   end
 
   # Filing History
+  @doc """
+  Lists filing history entries for the given company number.
+
+  Returns a single page of items extracted from the response envelope. Use
+  `stream_filing_history/3` to fetch every entry across all pages.
+  """
   @spec list_filing_history(String.t(), keyword(), client :: Client.t()) :: Response.t()
   def list_filing_history(company_number, params \\ [], client \\ %Client{}) do
     Client.get("/company/#{company_number}/filing-history", params, client)
@@ -151,6 +173,13 @@ defmodule CompaniesHouse do
   end
 
   # Persons with Significant Control (PSC)
+  @doc """
+  Lists persons with significant control for the given company number.
+
+  Returns a single page of items extracted from the response envelope. Use
+  `stream_persons_with_significant_control/3` to fetch every person across all
+  pages.
+  """
   @spec list_persons_with_significant_control(String.t(), keyword(), client :: Client.t()) ::
           Response.t()
   def list_persons_with_significant_control(company_number, params \\ [], client \\ %Client{}) do
@@ -269,7 +298,8 @@ defmodule CompaniesHouse do
   @doc """
   Lists charges for the given company number.
 
-  Returns the items array extracted from the response body.
+  Returns a single page of items extracted from the response body; pagination
+  metadata is discarded.
   """
   @spec list_charges(String.t(), keyword(), Client.t()) :: Response.t()
   def list_charges(company_number, params \\ [], client \\ %Client{}) do
@@ -314,7 +344,8 @@ defmodule CompaniesHouse do
   @doc """
   Lists UK establishments for the given company number.
 
-  Returns the items array extracted from the response body.
+  Returns a single page of items extracted from the response body; pagination
+  metadata is discarded.
   """
   @spec list_uk_establishments(String.t(), keyword(), Client.t()) :: Response.t()
   def list_uk_establishments(company_number, params \\ [], client \\ %Client{}) do
@@ -328,7 +359,8 @@ defmodule CompaniesHouse do
   @doc """
   Lists appointments for the given officer ID.
 
-  Returns the items array extracted from the response body.
+  Returns a single page of items extracted from the response body; pagination
+  metadata is discarded.
   """
   @spec list_officer_appointments(String.t(), keyword(), Client.t()) :: Response.t()
   def list_officer_appointments(officer_id, params \\ [], client \\ %Client{}) do
