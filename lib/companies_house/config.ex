@@ -7,8 +7,6 @@ defmodule CompaniesHouse.Config do
     defexception [:message]
   end
 
-  @type t :: Keyword.t()
-
   @valid_environments [:sandbox, :live]
 
   @doc """
