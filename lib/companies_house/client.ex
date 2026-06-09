@@ -7,7 +7,7 @@ defmodule CompaniesHouse.Client do
 
   defstruct environment: :sandbox
 
-  @valid_environments [:live, :sandbox]
+  @valid_environments Config.valid_environments()
   @typep environment :: :live | :sandbox
   @type t :: %__MODULE__{environment: environment()}
 

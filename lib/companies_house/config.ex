@@ -10,6 +10,13 @@ defmodule CompaniesHouse.Config do
   @valid_environments [:sandbox, :live]
 
   @doc """
+  Returns the list of valid environments. Canonical source consumed by
+  `CompaniesHouse.Client` so the two modules cannot drift apart.
+  """
+  @spec valid_environments() :: [:sandbox | :live]
+  def valid_environments, do: @valid_environments
+
+  @doc """
   Gets the key value from the environment config.
   """
   @spec get(atom(), any()) :: any()
