@@ -48,7 +48,7 @@ CompaniesHouse.Client.Req ← Req-based HTTP implementation
 
 **`CompaniesHouse`** is the main facade. All public functions accept optional `params` and `client` keyword args, defaulting to `%Client{}` (sandbox environment).
 
-**`CompaniesHouse.Client`** defines the HTTP behaviour (`get/3`, `post/3`, etc.) and the client struct. The concrete implementation is selected via application config (`config :companies_house, :http_client, ...`), which allows tests to swap in a Mox mock.
+**`CompaniesHouse.Client`** defines the HTTP behaviour (`get/2` and `get/3`) and the client struct. The concrete implementation is selected via application config (`config :companies_house, :http_client, ...`), which allows tests to swap in a Mox mock. The Companies House data API is read-only, so the behaviour exposes GET only — there are no POST/PUT/DELETE methods.
 
 **`CompaniesHouse.Client.Req`** builds the Req request with Basic Auth (API key from config), routes to sandbox or live base URL, and normalises responses: 200–299 → `{:ok, body}`, others → `{:error, {status, body}}`.
 

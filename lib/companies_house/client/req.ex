@@ -27,17 +27,6 @@ defmodule CompaniesHouse.Client.Req do
 
   @impl true
   @doc """
-  Sends a HTTP DELETE request to the given `path`.
-  """
-  @spec delete(path :: nonempty_binary, client :: Client.t()) :: Response.t()
-  def delete(path, client \\ %Client{}) do
-    with_telemetry(:delete, path, client, fn ->
-      new(client) |> Req.delete(url: path)
-    end)
-  end
-
-  @impl true
-  @doc """
   Sends a HTTP GET request to the given `path`.
   """
   @spec get(path :: nonempty_binary, client :: Client.t()) :: Response.t()
@@ -56,30 +45,6 @@ defmodule CompaniesHouse.Client.Req do
   def get(path, params, client) do
     with_telemetry(:get, path, client, fn ->
       new(client) |> Req.get(url: path, params: params)
-    end)
-  end
-
-  @impl true
-  @doc """
-  Sends a HTTP POST request to the given `path`.
-  """
-  @spec post(path :: nonempty_binary, params :: keyword(), client :: Client.t()) ::
-          Response.t()
-  def post(path, params \\ [], client \\ %Client{}) do
-    with_telemetry(:post, path, client, fn ->
-      new(client) |> Req.post(url: path, params: params)
-    end)
-  end
-
-  @impl true
-  @doc """
-  Sends a HTTP PUT request to the given `path`.
-  """
-  @spec put(path :: nonempty_binary, params :: keyword(), client :: Client.t()) ::
-          Response.t()
-  def put(path, params \\ [], client \\ %Client{}) do
-    with_telemetry(:put, path, client, fn ->
-      new(client) |> Req.put(url: path, params: params)
     end)
   end
 

@@ -76,30 +76,6 @@ defmodule CompaniesHouse.ClientTest do
       {:ok, client: client}
     end
 
-    test "delete/2 delegates to implementation", %{client: client} do
-      assert function_exported?(Client, :delete, 2)
-
-      expect(MockHTTPClient, :delete, fn path, received_client ->
-        assert path == "some-delete-path"
-        assert received_client == client
-        "delete-result"
-      end)
-
-      assert Client.delete("some-delete-path", client) == "delete-result"
-    end
-
-    test "delete/1 uses default client" do
-      assert function_exported?(Client, :delete, 1)
-
-      expect(MockHTTPClient, :delete, fn path, received_client ->
-        assert path == "some-delete-path"
-        assert received_client == %Client{}
-        "delete-result"
-      end)
-
-      assert Client.delete("some-delete-path") == "delete-result"
-    end
-
     test "get/2 delegates to implementation", %{client: client} do
       assert function_exported?(Client, :get, 2)
 
@@ -123,84 +99,6 @@ defmodule CompaniesHouse.ClientTest do
       end)
 
       assert Client.get("some-get-path", [some_key: "some-value"], client) == "get-result"
-    end
-
-    test "post/3 delegates to implementation", %{client: client} do
-      assert function_exported?(Client, :post, 3)
-
-      expect(MockHTTPClient, :post, fn path, params, received_client ->
-        assert path == "some-post-path"
-        assert params == [some_key: "some-value"]
-        assert received_client == client
-        "post-result"
-      end)
-
-      assert Client.post("some-post-path", [some_key: "some-value"], client) == "post-result"
-    end
-
-    test "post/2 uses default client" do
-      assert function_exported?(Client, :post, 2)
-
-      expect(MockHTTPClient, :post, fn path, params, received_client ->
-        assert path == "some-post-path"
-        assert params == [some_key: "some-value"]
-        assert received_client == %Client{}
-        "post-result"
-      end)
-
-      assert Client.post("some-post-path", some_key: "some-value") == "post-result"
-    end
-
-    test "post/1 uses default params and client" do
-      assert function_exported?(Client, :post, 1)
-
-      expect(MockHTTPClient, :post, fn path, params, received_client ->
-        assert path == "some-post-path"
-        assert params == []
-        assert received_client == %Client{}
-        "post-result"
-      end)
-
-      assert Client.post("some-post-path") == "post-result"
-    end
-
-    test "put/3 delegates to implementation", %{client: client} do
-      assert function_exported?(Client, :put, 3)
-
-      expect(MockHTTPClient, :put, fn path, params, received_client ->
-        assert path == "some-put-path"
-        assert params == [some_key: "some-value"]
-        assert received_client == client
-        "put-result"
-      end)
-
-      assert Client.put("some-put-path", [some_key: "some-value"], client) == "put-result"
-    end
-
-    test "put/2 uses default client" do
-      assert function_exported?(Client, :put, 2)
-
-      expect(MockHTTPClient, :put, fn path, params, received_client ->
-        assert path == "some-put-path"
-        assert params == [some_key: "some-value"]
-        assert received_client == %Client{}
-        "put-result"
-      end)
-
-      assert Client.put("some-put-path", some_key: "some-value") == "put-result"
-    end
-
-    test "put/1 uses default params and client" do
-      assert function_exported?(Client, :put, 1)
-
-      expect(MockHTTPClient, :put, fn path, params, received_client ->
-        assert path == "some-put-path"
-        assert params == []
-        assert received_client == %Client{}
-        "put-result"
-      end)
-
-      assert Client.put("some-put-path") == "put-result"
     end
   end
 end
