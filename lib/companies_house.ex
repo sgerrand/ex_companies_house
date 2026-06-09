@@ -343,6 +343,9 @@ defmodule CompaniesHouse do
         merged_params = Keyword.merge(params, start_index: start_index, items_per_page: 100)
 
         case Client.get(path, merged_params, client) |> handle_response() do
+          {:ok, %{"items" => []}} ->
+            nil
+
           {:ok, %{"items" => items, "total_results" => total}} ->
             next_index = start_index + length(items)
             {items, {next_index, next_index >= total}}

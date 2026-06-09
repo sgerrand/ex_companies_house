@@ -340,6 +340,19 @@ defmodule CompaniesHouseTest do
       assert result == []
     end
 
+    test "halts when a page returns empty items despite total_results" do
+      # A single expectation means a second fetch (the infinite-loop bug) makes
+      # Mox raise, failing the test instead of hanging.
+      expect(MockHTTPClient, :get, fn _path, params, _client ->
+        assert params[:start_index] == 0
+
+        {:ok, %{status: 200, body: %{"items" => [], "total_results" => 5}}}
+      end)
+
+      result = CompaniesHouse.stream_company_officers("12345678") |> Enum.to_list()
+      assert result == []
+    end
+
     test "merges caller-supplied params" do
       expect(MockHTTPClient, :get, fn path, params, _client ->
         assert path == "/company/12345678/officers"
