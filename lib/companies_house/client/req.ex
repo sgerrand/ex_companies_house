@@ -64,24 +64,35 @@ defmodule CompaniesHouse.Client.Req do
       metadata
     )
 
-    result = fun.()
+    try do
+      result = fun.()
 
-    case result do
-      {:ok, response} ->
-        :telemetry.execute(
-          [:companies_house, :request, :stop],
-          %{duration: System.monotonic_time() - start},
-          Map.put(metadata, :status, response.status)
-        )
+      case result do
+        {:ok, response} ->
+          :telemetry.execute(
+            [:companies_house, :request, :stop],
+            %{duration: System.monotonic_time() - start},
+            Map.put(metadata, :status, response.status)
+          )
 
-      {:error, reason} ->
+        {:error, reason} ->
+          :telemetry.execute(
+            [:companies_house, :request, :exception],
+            %{duration: System.monotonic_time() - start},
+            Map.merge(metadata, %{kind: :error, reason: reason})
+          )
+      end
+
+      result
+    rescue
+      exception ->
         :telemetry.execute(
           [:companies_house, :request, :exception],
           %{duration: System.monotonic_time() - start},
-          Map.merge(metadata, %{kind: :error, reason: reason})
+          Map.merge(metadata, %{kind: :error, reason: exception})
         )
-    end
 
-    result
+        reraise exception, __STACKTRACE__
+    end
   end
 end

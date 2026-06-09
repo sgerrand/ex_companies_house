@@ -107,6 +107,28 @@ defmodule CompaniesHouse.TelemetryTest do
       assert metadata.kind == :error
       assert metadata.environment == :sandbox
     end
+
+    test "emits exception event when building the request raises" do
+      :telemetry.attach(
+        @handler_id,
+        [:companies_house, :request, :exception],
+        &__MODULE__.handle_exception/4,
+        self()
+      )
+
+      # No API key configured -> Config.api_key/0 raises while building the request.
+      Application.delete_env(:companies_house, :api_key)
+      client = %Client{environment: :sandbox}
+
+      assert_raise CompaniesHouse.Config.ConfigError, fn ->
+        ReqClient.get("http://localhost/company/12345678", client)
+      end
+
+      assert_receive {:telemetry_exception, measurements, metadata}
+      assert is_integer(measurements.duration)
+      assert metadata.kind == :error
+      assert %CompaniesHouse.Config.ConfigError{} = metadata.reason
+    end
   end
 
   def handle_start(_event, measurements, metadata, test_pid) do
