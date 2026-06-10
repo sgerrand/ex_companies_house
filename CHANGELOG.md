@@ -6,6 +6,35 @@ adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- %% CHANGELOG_ENTRIES %% -->
 
+## [0.4.0](https://github.com/sgerrand/ex_companies_house/compare/v0.3.1...v0.4.0) (2026-06-10)
+
+
+### Added
+
+* **client:** make request retry configurable ([e818ff8](https://github.com/sgerrand/ex_companies_house/commit/e818ff84dbbbd1f811d5c059767693654f1f2f14))
+* **psc:** support all PSC kinds, not just individual ([230b155](https://github.com/sgerrand/ex_companies_house/commit/230b1550b84bd91e3681b41d658c2b80c13d259e))
+* **telemetry:** emit exception event when the request raises ([0ed671a](https://github.com/sgerrand/ex_companies_house/commit/0ed671af9dc989d3665c174597ebfba72f912b47))
+
+
+### Fixed
+
+* **deps:** bump req from 0.5.17 to 0.5.18 ([#94](https://github.com/sgerrand/ex_companies_house/issues/94)) ([1303e44](https://github.com/sgerrand/ex_companies_house/commit/1303e44268db09f1bee34278fdb89bc381154edf))
+* **deps:** bump the elixir group with 2 updates ([#81](https://github.com/sgerrand/ex_companies_house/issues/81)) ([f57c15d](https://github.com/sgerrand/ex_companies_house/commit/f57c15d4dda13ee86ac3794909f75e747f523b43))
+* move preferred_cli_env to cli/0 callback ([f63952f](https://github.com/sgerrand/ex_companies_house/commit/f63952f5d2c982b4a6782996619857f31a4637b1))
+* remove unused require Req ([fa84e32](https://github.com/sgerrand/ex_companies_house/commit/fa84e3213d284f6051c62f623877e7106d3f3c3e))
+* **stream:** halt pagination when a page returns empty items ([85bc28a](https://github.com/sgerrand/ex_companies_house/commit/85bc28a6a1c3989c8e4f0803a74d4e87f02551cc))
+* **types:** widen Response.t and drop unused Config type ([bcd6901](https://github.com/sgerrand/ex_companies_house/commit/bcd690143f1945ca815f3193a2bd1bdd5682e01e))
+
+
+### Changed
+
+* **api:** make clear that list_* returns a single page ([544ff16](https://github.com/sgerrand/ex_companies_house/commit/544ff16f4480da6686b60f6fc02210a9d40bd550))
+* **client:** source valid environments from Config ([54c5e9c](https://github.com/sgerrand/ex_companies_house/commit/54c5e9c6c6eca835026e42e34311f0940f5c933e))
+* document mado as the Markdown linter ([7182b73](https://github.com/sgerrand/ex_companies_house/commit/7182b73da269f8a8f804ed4de3377aa90aab3ad1))
+* document release-mate release workflow ([9a20d15](https://github.com/sgerrand/ex_companies_house/commit/9a20d158af11b5944e161483ccfe0e7933e56e83))
+* **readme:** pad fenced code block with blank lines ([afb6bda](https://github.com/sgerrand/ex_companies_house/commit/afb6bda838174c8edb8065cabf41e8b9b746302c))
+* simplify facade config and route through Client seam ([#92](https://github.com/sgerrand/ex_companies_house/issues/92)) ([21a4209](https://github.com/sgerrand/ex_companies_house/commit/21a42092f115b5385b1ad8452d0b345539399794))
+
 ## [0.3.1](https://github.com/sgerrand/ex_companies_house/compare/v0.3.0...v0.3.1) (2026-04-17)
 
 
