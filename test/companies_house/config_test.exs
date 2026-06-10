@@ -27,6 +27,12 @@ defmodule CompaniesHouse.ConfigTest do
     :ok
   end
 
+  describe "valid_environments/0" do
+    test "returns the list of valid environments" do
+      assert Config.valid_environments() == [:sandbox, :live]
+    end
+  end
+
   describe "get/2" do
     test "when key exists" do
       Application.put_env(:companies_house, :key, 1)
