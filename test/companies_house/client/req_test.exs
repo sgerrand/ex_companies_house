@@ -45,6 +45,17 @@ defmodule CompaniesHouse.Client.ReqTest do
       end
     end
 
+    test "disables retries by default" do
+      assert ReqClient.new().options.retry == false
+    end
+
+    test "reads retry behaviour from application config" do
+      Application.put_env(:companies_house, :retry, :safe_transient)
+      on_exit(fn -> Application.delete_env(:companies_house, :retry) end)
+
+      assert ReqClient.new().options.retry == :safe_transient
+    end
+
     test "raises error when api key is not configured" do
       assert Application.delete_env(:companies_house, :api_key) == :ok
 
@@ -55,21 +66,6 @@ defmodule CompaniesHouse.Client.ReqTest do
           ReqClient.new(%Client{environment: :sandbox})
         end
       )
-    end
-  end
-
-  describe "delete/2" do
-    setup [:setup_bypass]
-
-    @tag path: "/delete"
-    test "requests expected path", c do
-      Bypass.expect(c.bypass, "DELETE", c[:path], fn conn ->
-        assert ["Basic c29tZSBBUEkga2V5"] == Plug.Conn.get_req_header(conn, "authorization")
-        Plug.Conn.send_resp(conn, 200, "deleted")
-      end)
-
-      {:ok, response} = ReqClient.delete(c.url, c.client)
-      assert "deleted" == response.body
     end
   end
 
@@ -101,38 +97,6 @@ defmodule CompaniesHouse.Client.ReqTest do
 
       {:ok, response} = ReqClient.get(c.url, [some: "params"], c.client)
       assert "fetched" == response.body
-    end
-  end
-
-  describe "post/3" do
-    setup [:setup_bypass]
-
-    @tag path: "/post"
-    test "requests expected path", c do
-      Bypass.expect(c.bypass, "POST", c[:path], fn conn ->
-        assert ["Basic c29tZSBBUEkga2V5"] == Plug.Conn.get_req_header(conn, "authorization")
-        assert conn.query_string == "some=params"
-        Plug.Conn.send_resp(conn, 200, "fetched")
-      end)
-
-      {:ok, response} = ReqClient.post(c.url, [some: "params"], c.client)
-      assert "fetched" == response.body
-    end
-  end
-
-  describe "put/3" do
-    setup [:setup_bypass]
-
-    @tag path: "/put"
-    test "requests expected path", c do
-      Bypass.expect(c.bypass, "PUT", c[:path], fn conn ->
-        assert ["Basic c29tZSBBUEkga2V5"] == Plug.Conn.get_req_header(conn, "authorization")
-        assert conn.query_string == "some=params"
-        Plug.Conn.send_resp(conn, 200, "updated")
-      end)
-
-      {:ok, response} = ReqClient.put(c.url, [some: "params"], c.client)
-      assert "updated" == response.body
     end
   end
 

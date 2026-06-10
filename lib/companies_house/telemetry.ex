@@ -23,11 +23,15 @@ defmodule CompaniesHouse.Telemetry do
   ### `[:companies_house, :request, :exception]`
 
   Emitted when the HTTP request encounters a transport error (e.g. connection
-  refused, timeout, DNS failure).
+  refused, timeout, DNS failure), or when building/sending the request raises
+  (e.g. the API key is not configured). For a raise, the event fires and then
+  the exception is re-raised to the caller.
 
   **Measurements:** `%{duration: integer()}`
 
   **Metadata:** `%{method: atom(), path: String.t(), environment: :live | :sandbox, kind: :error, reason: term()}`
+
+  `reason` holds the transport error term or the raised exception struct.
 
   ## Attaching handlers
 

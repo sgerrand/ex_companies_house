@@ -41,6 +41,17 @@ By default the client targets the sandbox environment. To use the live API:
 config :companies_house, environment: :live
 ```
 
+#### Retries
+
+By default no retries are performed. To retry transient failures — including
+`429` rate-limit and `503` responses, honouring their `Retry-After` header —
+set the `:retry` option, which is passed straight through to
+[`Req`](https://hexdocs.pm/req):
+
+```elixir
+config :companies_house, retry: :safe_transient
+```
+
 ### Available functions
 
 #### Company data
@@ -64,7 +75,7 @@ config :companies_house, environment: :live
 #### Persons with significant control
 
 - `list_persons_with_significant_control/3`
-- `get_person_with_significant_control/3`
+- `get_person_with_significant_control/4` (pass `kind:` for corporate-entity, legal-person, beneficial-owner, and super-secure PSCs)
 
 #### Charges
 
@@ -90,6 +101,7 @@ config :companies_house, environment: :live
 ### Return values
 
 - `get_*` and `list_*` return `{:ok, map()}` or `{:ok, [map()]}` on success. Errors are either `{:error, {status_code, body}}` for non-2xx HTTP responses or `{:error, exception}` for network/transport failures (e.g. timeout, connection refused).
+- `list_*` return only a **single page** of items and discard pagination metadata — they do not auto-paginate. Use the matching `stream_*` function to fetch every item across all pages.
 - `search_*` return the full response envelope (including `"total_results"` and `"start_index"`), not just the items array.
 - `stream_*` return a lazy `Enumerable` that auto-paginates. Pipe into `Enum` or `Stream` functions.
 

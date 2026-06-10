@@ -48,11 +48,11 @@ CompaniesHouse.Client.Req ← Req-based HTTP implementation
 
 **`CompaniesHouse`** is the main facade. All public functions accept optional `params` and `client` keyword args, defaulting to `%Client{}` (sandbox environment).
 
-**`CompaniesHouse.Client`** defines the HTTP behaviour (`get/3`, `post/3`, etc.) and the client struct. The concrete implementation is selected via application config (`config :companies_house, :http_client, ...`), which allows tests to swap in a Mox mock.
+**`CompaniesHouse.Client`** defines the HTTP behaviour (`get/2` and `get/3`) and the client struct. The concrete implementation is selected via application config (`config :companies_house, :http_client, ...`), which allows tests to swap in a Mox mock. The Companies House data API is read-only, so the behaviour exposes GET only — there are no POST/PUT/DELETE methods.
 
 **`CompaniesHouse.Client.Req`** builds the Req request with Basic Auth (API key from config), routes to sandbox or live base URL, and normalises responses: 200–299 → `{:ok, body}`, others → `{:error, {status, body}}`.
 
-**`CompaniesHouse.Config`** reads `:api_key` and `:environment` from application config, raising `ConfigError` for missing or invalid values.
+**`CompaniesHouse.Config`** reads `:api_key`, `:environment`, and `:retry` from application config, raising `ConfigError` for missing or invalid values. `:retry` defaults to `false` and is passed straight through to `Req` (e.g. `:safe_transient` to honour `Retry-After` on `429`/`503`). The canonical list of valid environments lives in `Config.valid_environments/0`; `Client` reads it at compile time so the two cannot drift.
 
 ## Releases
 
@@ -75,11 +75,11 @@ Tests use **Mox** for unit tests (mock the `Client` behaviour) and **Bypass** fo
 
 - Environments: `:sandbox` (default, safe) and `:live`.
 - Non-200 HTTP responses surface as `{:error, {status_code, body}}`; network/transport failures surface as `{:error, exception}`. Both shapes are captured by `Response.error()`.
-- List endpoints return `{:ok, [item]}` by extracting `body["items"]`.
+- List endpoints return `{:ok, [item]}` by extracting `body["items"]`. They return only a **single page** and discard pagination metadata — `stream_*` is the way to fetch all pages. Document this on every `list_*` function.
 - Search endpoints return `{:ok, map()}` with the full response envelope (pagination fields included alongside `"items"`).
-- `stream_*` functions return `Enumerable.t()` (a lazy `Stream`), not `Response.t()`. They auto-paginate at 100 items per page and stop silently on API error.
+- `stream_*` functions return `Enumerable.t()` (a lazy `Stream`), not `Response.t()`. They auto-paginate at 100 items per page and stop silently on API error. An empty `items` page is treated as terminal (guards against an infinite loop when `total_results` outruns the items actually returned).
 - No Ecto—don't add it. Data is plain maps from JSON responses.
 - All public functions have `@doc`, `@spec`, and doctests where applicable.
-- The `CompaniesHouse` facade reaches the HTTP layer via `Client.get/post/...` (the `defdelegate ... to: @impl_module` seam in `Client`). There is one indirection point — don't reintroduce a separate `compile_env(:http_client)` lookup in the facade.
+- The `CompaniesHouse` facade reaches the HTTP layer via `Client.get/2` and `Client.get/3` (the `defdelegate ... to: @impl_module` seam in `Client`). There is one indirection point — don't reintroduce a separate `compile_env(:http_client)` lookup in the facade.
 
 At the end of every change, update CLAUDE.md with anything useful that would have been helpful at the start.

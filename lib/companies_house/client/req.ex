@@ -14,6 +14,14 @@ defmodule CompaniesHouse.Client.Req do
 
   @doc """
   Creates a new client for interacting with the Companies House API.
+
+  Retry behaviour is read from the `:retry` application key and passed
+  straight to `Req` (see `Req.request/1`). It defaults to `false` (no
+  retries). Set it to enable resilience against transient failures and
+  rate limiting — `Req`'s `:safe_transient` honours `Retry-After` on `429`
+  and `503` responses:
+
+      config :companies_house, retry: :safe_transient
   """
   @spec new(client :: Client.t()) :: Req.Request.t()
   def new(client \\ %Client{}) do
@@ -21,19 +29,8 @@ defmodule CompaniesHouse.Client.Req do
       base_url: base_url(client.environment),
       auth: {:basic, Config.api_key()},
       headers: [{"Accept", "application/json"}],
-      retry: false
+      retry: Config.get(:retry, false)
     )
-  end
-
-  @impl true
-  @doc """
-  Sends a HTTP DELETE request to the given `path`.
-  """
-  @spec delete(path :: nonempty_binary, client :: Client.t()) :: Response.t()
-  def delete(path, client \\ %Client{}) do
-    with_telemetry(:delete, path, client, fn ->
-      new(client) |> Req.delete(url: path)
-    end)
   end
 
   @impl true
@@ -59,30 +56,6 @@ defmodule CompaniesHouse.Client.Req do
     end)
   end
 
-  @impl true
-  @doc """
-  Sends a HTTP POST request to the given `path`.
-  """
-  @spec post(path :: nonempty_binary, params :: keyword(), client :: Client.t()) ::
-          Response.t()
-  def post(path, params \\ [], client \\ %Client{}) do
-    with_telemetry(:post, path, client, fn ->
-      new(client) |> Req.post(url: path, params: params)
-    end)
-  end
-
-  @impl true
-  @doc """
-  Sends a HTTP PUT request to the given `path`.
-  """
-  @spec put(path :: nonempty_binary, params :: keyword(), client :: Client.t()) ::
-          Response.t()
-  def put(path, params \\ [], client \\ %Client{}) do
-    with_telemetry(:put, path, client, fn ->
-      new(client) |> Req.put(url: path, params: params)
-    end)
-  end
-
   defp base_url(:live), do: @base_live_url
   defp base_url(:sandbox), do: @base_sandbox_url
 
@@ -99,24 +72,35 @@ defmodule CompaniesHouse.Client.Req do
       metadata
     )
 
-    result = fun.()
+    try do
+      result = fun.()
 
-    case result do
-      {:ok, response} ->
-        :telemetry.execute(
-          [:companies_house, :request, :stop],
-          %{duration: System.monotonic_time() - start},
-          Map.put(metadata, :status, response.status)
-        )
+      case result do
+        {:ok, response} ->
+          :telemetry.execute(
+            [:companies_house, :request, :stop],
+            %{duration: System.monotonic_time() - start},
+            Map.put(metadata, :status, response.status)
+          )
 
-      {:error, reason} ->
+        {:error, reason} ->
+          :telemetry.execute(
+            [:companies_house, :request, :exception],
+            %{duration: System.monotonic_time() - start},
+            Map.merge(metadata, %{kind: :error, reason: reason})
+          )
+      end
+
+      result
+    rescue
+      exception ->
         :telemetry.execute(
           [:companies_house, :request, :exception],
           %{duration: System.monotonic_time() - start},
-          Map.merge(metadata, %{kind: :error, reason: reason})
+          Map.merge(metadata, %{kind: :error, reason: exception})
         )
-    end
 
-    result
+        reraise exception, __STACKTRACE__
+    end
   end
 end

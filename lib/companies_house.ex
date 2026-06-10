@@ -12,6 +12,12 @@ defmodule CompaniesHouse do
 
       config :companies_house, environment: :live
 
+  Retries are disabled by default. To retry transient failures (including `429`
+  rate-limit and `503` responses, honouring `Retry-After`), set `:retry`, which
+  is passed through to `Req`:
+
+      config :companies_house, retry: :safe_transient
+
   ## Usage
 
       # Fetch a company profile using the default (sandbox) client
@@ -32,7 +38,7 @@ defmodule CompaniesHouse do
   Filing history: `list_filing_history/3`, `get_filing_history/3`
 
   Persons with significant control: `list_persons_with_significant_control/3`,
-  `get_person_with_significant_control/3`
+  `get_person_with_significant_control/4`
 
   Charges: `list_charges/3`, `get_charge/3`
 
@@ -53,6 +59,16 @@ defmodule CompaniesHouse do
 
   - `get_*` — returns `{:ok, map()}` with the resource
   - `list_*` — returns `{:ok, [map()]}` with the items array extracted from the response envelope
+
+  > #### `list_*` returns a single page {: .warning}
+  >
+  > `list_*` functions do **not** auto-paginate. They return only the items
+  > from one response and discard the pagination metadata (`total_results`,
+  > `start_index`). When a company has more results than fit on a page, the
+  > remainder is not fetched. To retrieve every item across all pages, use the
+  > matching `stream_*` function where one exists
+  > (`stream_company_officers/3`, `stream_filing_history/3`,
+  > `stream_persons_with_significant_control/3`).
 
   `search_*` functions return the full response envelope so that pagination
   metadata is accessible:
@@ -113,6 +129,12 @@ defmodule CompaniesHouse do
   end
 
   # Officers
+  @doc """
+  Lists officers for the given company number.
+
+  Returns a single page of items extracted from the response envelope. Use
+  `stream_company_officers/3` to fetch every officer across all pages.
+  """
   @spec list_company_officers(
           company_number :: String.t(),
           params :: keyword(),
@@ -131,6 +153,12 @@ defmodule CompaniesHouse do
   end
 
   # Filing History
+  @doc """
+  Lists filing history entries for the given company number.
+
+  Returns a single page of items extracted from the response envelope. Use
+  `stream_filing_history/3` to fetch every entry across all pages.
+  """
   @spec list_filing_history(String.t(), keyword(), client :: Client.t()) :: Response.t()
   def list_filing_history(company_number, params \\ [], client \\ %Client{}) do
     Client.get("/company/#{company_number}/filing-history", params, client)
@@ -145,6 +173,13 @@ defmodule CompaniesHouse do
   end
 
   # Persons with Significant Control (PSC)
+  @doc """
+  Lists persons with significant control for the given company number.
+
+  Returns a single page of items extracted from the response envelope. Use
+  `stream_persons_with_significant_control/3` to fetch every person across all
+  pages.
+  """
   @spec list_persons_with_significant_control(String.t(), keyword(), client :: Client.t()) ::
           Response.t()
   def list_persons_with_significant_control(company_number, params \\ [], client \\ %Client{}) do
@@ -157,11 +192,54 @@ defmodule CompaniesHouse do
     |> maybe_extract_items()
   end
 
-  @spec get_person_with_significant_control(String.t(), String.t(), client :: Client.t()) ::
+  @psc_kinds %{
+    individual: "individual",
+    corporate_entity: "corporate-entity",
+    legal_person: "legal-person",
+    individual_beneficial_owner: "individual-beneficial-owner",
+    corporate_entity_beneficial_owner: "corporate-entity-beneficial-owner",
+    legal_person_beneficial_owner: "legal-person-beneficial-owner",
+    super_secure: "super-secure",
+    super_secure_beneficial_owner: "super-secure-beneficial-owner"
+  }
+
+  @doc """
+  Returns a single person with significant control (PSC) for the company.
+
+  PSCs come in several kinds, each served from a different path. The `:kind`
+  option selects which and defaults to `:individual`:
+
+    * `:individual`
+    * `:corporate_entity`
+    * `:legal_person`
+    * `:individual_beneficial_owner`
+    * `:corporate_entity_beneficial_owner`
+    * `:legal_person_beneficial_owner`
+    * `:super_secure`
+    * `:super_secure_beneficial_owner`
+
+  Raises `ArgumentError` for an unknown kind.
+
+      # An individual PSC (the default)
+      CompaniesHouse.get_person_with_significant_control("00000006", "abc")
+
+      # A corporate-entity PSC
+      CompaniesHouse.get_person_with_significant_control("00000006", "abc",
+        kind: :corporate_entity
+      )
+  """
+  @spec get_person_with_significant_control(String.t(), String.t(), keyword(), Client.t()) ::
           Response.t()
-  def get_person_with_significant_control(company_number, psc_id, client \\ %Client{}) do
+  def get_person_with_significant_control(
+        company_number,
+        psc_id,
+        params \\ [],
+        client \\ %Client{}
+      ) do
+    segment = psc_kind_segment(Keyword.get(params, :kind, :individual))
+
     Client.get(
-      "/company/#{company_number}/persons-with-significant-control/individual/#{psc_id}",
+      "/company/#{company_number}/persons-with-significant-control/#{segment}/#{psc_id}",
       client
     )
     |> handle_response()
@@ -220,7 +298,8 @@ defmodule CompaniesHouse do
   @doc """
   Lists charges for the given company number.
 
-  Returns the items array extracted from the response body.
+  Returns a single page of items extracted from the response body; pagination
+  metadata is discarded.
   """
   @spec list_charges(String.t(), keyword(), Client.t()) :: Response.t()
   def list_charges(company_number, params \\ [], client \\ %Client{}) do
@@ -265,7 +344,8 @@ defmodule CompaniesHouse do
   @doc """
   Lists UK establishments for the given company number.
 
-  Returns the items array extracted from the response body.
+  Returns a single page of items extracted from the response body; pagination
+  metadata is discarded.
   """
   @spec list_uk_establishments(String.t(), keyword(), Client.t()) :: Response.t()
   def list_uk_establishments(company_number, params \\ [], client \\ %Client{}) do
@@ -279,7 +359,8 @@ defmodule CompaniesHouse do
   @doc """
   Lists appointments for the given officer ID.
 
-  Returns the items array extracted from the response body.
+  Returns a single page of items extracted from the response body; pagination
+  metadata is discarded.
   """
   @spec list_officer_appointments(String.t(), keyword(), Client.t()) :: Response.t()
   def list_officer_appointments(officer_id, params \\ [], client \\ %Client{}) do
@@ -343,6 +424,9 @@ defmodule CompaniesHouse do
         merged_params = Keyword.merge(params, start_index: start_index, items_per_page: 100)
 
         case Client.get(path, merged_params, client) |> handle_response() do
+          {:ok, %{"items" => []}} ->
+            nil
+
           {:ok, %{"items" => items, "total_results" => total}} ->
             next_index = start_index + length(items)
             {items, {next_index, next_index >= total}}
@@ -355,6 +439,17 @@ defmodule CompaniesHouse do
         end
     end)
     |> Stream.flat_map(& &1)
+  end
+
+  defp psc_kind_segment(kind) do
+    case Map.fetch(@psc_kinds, kind) do
+      {:ok, segment} ->
+        segment
+
+      :error ->
+        raise ArgumentError,
+              "Invalid PSC kind: #{inspect(kind)}. Must be one of: #{inspect(Map.keys(@psc_kinds))}"
+    end
   end
 
   defp maybe_extract_items({:ok, %{"items" => items}}), do: {:ok, items}
