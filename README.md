@@ -18,7 +18,7 @@ to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:companies_house, "~> 0.3.1"}
+    {:companies_house, "~> 0.4.0"}
   ]
 end
 ```
