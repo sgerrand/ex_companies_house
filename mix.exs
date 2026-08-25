@@ -47,7 +47,7 @@ defmodule CompaniesHouse.MixProject do
 
   defp deps do
     [
-      {:req, "~> 0.6.1"},
+      {:req, "~> 0.7.2"},
       {:telemetry, "~> 1.0"},
       {:bypass, "~> 2.1", only: :test},
       {:excoveralls, "~> 0.18", only: :test},
