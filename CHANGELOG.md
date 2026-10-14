@@ -6,6 +6,13 @@ adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- %% CHANGELOG_ENTRIES %% -->
 
+## [0.4.2](https://github.com/sgerrand/ex_companies_house/compare/v0.4.1...v0.4.2) (2026-10-14)
+
+
+### Fixed
+
+* **deps:** bump req from 0.7.4 to 0.7.5 ([#116](https://github.com/sgerrand/ex_companies_house/issues/116)) ([154d410](https://github.com/sgerrand/ex_companies_house/commit/154d4102e5757b40a93d56b4784860a4eb2a65b6))
+
 ## [0.4.1](https://github.com/sgerrand/ex_companies_house/compare/v0.4.0...v0.4.1) (2026-09-15)
 
 
